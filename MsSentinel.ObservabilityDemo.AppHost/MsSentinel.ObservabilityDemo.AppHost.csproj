@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MsSentinel.ObservabilityDemo.ApiService\MsSentinel.ObservabilityDemo.ApiService.csproj" />
-    <ProjectReference Include="..\MsSentinel.ObservabilityDemo.Web\MsSentinel.ObservabilityDemo.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
