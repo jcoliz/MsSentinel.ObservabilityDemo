@@ -57,14 +57,14 @@ namespace MsSentinel.ObservabilityDemo.ApiService.Client
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<WeatherForecast>> GetWeatherForecastAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<WeatherForecast>> GetAsync()
         {
-            return GetWeatherForecastAsync(System.Threading.CancellationToken.None);
+            return GetAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<WeatherForecast>> GetWeatherForecastAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<WeatherForecast>> GetAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -77,8 +77,8 @@ namespace MsSentinel.ObservabilityDemo.ApiService.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "weatherforecast"
-                    urlBuilder_.Append("weatherforecast");
+                    // Operation Path: "WeatherForecast"
+                    urlBuilder_.Append("WeatherForecast");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -245,18 +245,18 @@ namespace MsSentinel.ObservabilityDemo.ApiService.Client
     public partial class WeatherForecast
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Date")]
+        [System.Text.Json.Serialization.JsonPropertyName("date")]
         [System.Text.Json.Serialization.JsonConverter(typeof(DateFormatConverter))]
         public System.DateTimeOffset Date { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("TemperatureC")]
+        [System.Text.Json.Serialization.JsonPropertyName("temperatureC")]
         public int TemperatureC { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("Summary")]
-        public string Summary { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("TemperatureF")]
+        [System.Text.Json.Serialization.JsonPropertyName("temperatureF")]
         public int TemperatureF { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("summary")]
+        public string Summary { get; set; }
 
     }
 
