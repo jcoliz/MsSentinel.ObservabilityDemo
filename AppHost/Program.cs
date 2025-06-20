@@ -1,6 +1,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var apiService = builder.AddProject<Projects.MsSentinel_ObservabilityDemo_ApiService>("apiservice");
+var apiService = builder.AddProject<Projects.MsSentinel_ObservabilityDemo_ApiService>("apiservice")
+    .WithEnvironment("Logging__Console__FormatterName","systemd");
 
 #if false
 builder.AddProject<Projects.MsSentinel_ObservabilityDemo_Web>("webfrontend")
