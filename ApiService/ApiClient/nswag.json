@@ -104,7 +104,7 @@
       "templateDirectory": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../../RestApiPoller/ApiClient.cs",
+      "output": "../../RestApiPoller/ApiService_ApiClient.cs",
       "newLineBehavior": "Auto"
     }
   }
