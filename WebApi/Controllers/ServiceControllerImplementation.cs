@@ -1,10 +1,11 @@
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using MsSentinel.MockApi.WebApi.Api;
 using MsSentinel.MockApi.WebApi.Application;
 
 namespace MsSentinel.MockApi.WebApi.Controllers;
 
-public partial class ServiceControllerImplementation(FailureModes failureModes, ILogger<ServiceControllerImplementation> logger) : ISyntheticS1Controller
+public partial class ServiceControllerImplementation(FailureModes failureModes, ActivitySource activitySource, ILogger<ServiceControllerImplementation> logger) : ISyntheticS1Controller
 {
     private IReadOnlyDictionary<string,IEnumerable<string>> emptyHeaders { get; } = new Dictionary<string,IEnumerable<string>>();
 
@@ -21,6 +22,8 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
     public Task<SwaggerResponse<ActivityResponse>> GetActivitiesAsync(string? userAgent, DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
     {
+        using var activity = activitySource.StartActivity("GetActivitiesAsync", ActivityKind.Server);
+
         logUserAgent(userAgent ?? "none");
 
         var count = limit.HasValue ? Math.Min(limit.Value,numRecordsPerPage) : numRecordsPerPage;
@@ -109,6 +112,8 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
     public Task<SwaggerResponse<AgentResponse>> GetAgentsAsync(DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
     {
+        using var activity = activitySource.StartActivity("GetAgentsAsync", ActivityKind.Server);
+
         var total = numRecordsPerPage / 2;
         var count = limit.HasValue ? Math.Min(limit.Value,total) : total;
         var data = Enumerable
@@ -131,10 +136,12 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
     public Task<SwaggerResponse<AlertResponse>> GetAlertsAsync(DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
     {
+        using var activity = activitySource.StartActivity("GetAlertsAsync", ActivityKind.Server);
+        
         if (failureModes.AlertsStatus != StatusCodes.Status200OK)
         {
             logFailureMode(failureModes.AlertsStatus);
-            return Task.FromResult(new SwaggerResponse<AlertResponse>(failureModes.AlertsStatus, emptyHeaders, new () ));
+            return Task.FromResult(new SwaggerResponse<AlertResponse>(failureModes.AlertsStatus, emptyHeaders, new()));
         }
 
         logOkDetails(1, createdAt__gt, createdAt__lt, updatedAt__gt, updatedAt__lt, limit, cursor);
@@ -164,10 +171,12 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
     public Task<SwaggerResponse<GroupsResponse>> GetGroupsAsync(DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
     {
+        using var activity = activitySource.StartActivity("GetGroupsAsync", ActivityKind.Server);
+
         if (failureModes.GroupsStatus != StatusCodes.Status200OK)
         {
             logFailureMode(failureModes.GroupsStatus);
-            return Task.FromResult(new SwaggerResponse<GroupsResponse>(failureModes.GroupsStatus, emptyHeaders, new () ));
+            return Task.FromResult(new SwaggerResponse<GroupsResponse>(failureModes.GroupsStatus, emptyHeaders, new()));
         }
 
         logOkDetails(1, createdAt__gt, createdAt__lt, updatedAt__gt, updatedAt__lt, limit, cursor);
@@ -196,10 +205,12 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
     public Task<SwaggerResponse<ThreatResponse>> GetThreatsAsync(DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
     {
+        using var activity = activitySource.StartActivity("GetThreatsAsync", ActivityKind.Server);
+
         if (failureModes.ThreatsStatus != StatusCodes.Status200OK)
         {
             logFailureMode(failureModes.ThreatsStatus);
-            return Task.FromResult(new SwaggerResponse<ThreatResponse>(failureModes.ThreatsStatus, emptyHeaders, new () ));
+            return Task.FromResult(new SwaggerResponse<ThreatResponse>(failureModes.ThreatsStatus, emptyHeaders, new()));
         }
 
         var total = numRecordsPerPage / 4;

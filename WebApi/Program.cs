@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using MsSentinel.MockApi.WebApi;
 using MsSentinel.MockApi.WebApi.Api;
 using MsSentinel.MockApi.WebApi.Application;
@@ -29,6 +30,9 @@ builder.Services.AddSingleton<ISyntheticS1Controller,ServiceControllerImplementa
 builder.Services.AddSingleton<ISyntheticDSController,SyntheticDSImplementation>();
 builder.Services.AddSingleton<IAdminController,AdminControllerImplementation>();
 builder.Services.AddSingleton<FailureModes>();
+
+builder.Services.AddSingleton(
+    new ActivitySource("MsSentinel.MockApi.WebApi", "1.0.0"));
 
 var app = builder.Build();
 
