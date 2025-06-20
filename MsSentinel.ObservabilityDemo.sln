@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MsSentinel.ObservabilityDem
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RestApiPoller", "RestApiPoller", "{FFEF27C0-4319-EBB3-586E-76A2939313E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsSentinelObservabilityDemo.RestApiPoller", "RestApiPoller\MsSentinel.ObservabilityDemo.RestApiPoller.csproj", "{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsSentinel.ObservabilityDemo.RestApiPoller", "RestApiPoller\MsSentinel.ObservabilityDemo.RestApiPoller.csproj", "{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataCollectionRule", "DataCollectionRule", "{80DE4C33-D8EB-6883-F521-1BF0BD1BC6EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsSentinel.ObservabilityDemo.DataCollectionRule", "DataCollectionRule\MsSentinel.ObservabilityDemo.DataCollectionRule.csproj", "{FB8D32CD-BDD8-419C-99DD-E02489510D65}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,12 +75,25 @@ Global
 		{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1}.Release|x64.Build.0 = Release|Any CPU
 		{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1}.Release|x86.ActiveCfg = Release|Any CPU
 		{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1}.Release|x86.Build.0 = Release|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|x64.Build.0 = Debug|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|x86.Build.0 = Debug|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|x64.ActiveCfg = Release|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|x64.Build.0 = Release|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|x86.ActiveCfg = Release|Any CPU
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1} = {FFEF27C0-4319-EBB3-586E-76A2939313E3}
+		{FB8D32CD-BDD8-419C-99DD-E02489510D65} = {80DE4C33-D8EB-6883-F521-1BF0BD1BC6EA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FF132076-AB9E-4CAD-B187-31CE7A47469E}
