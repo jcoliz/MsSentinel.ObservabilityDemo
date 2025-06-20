@@ -1,9 +1,10 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using MsSentinel.ObservabilityDemo.ApiService.Client;
 
 namespace MsSentinel.ObservabilityDemo.RestApiPoller;
 
-public partial class Worker(ActivitySource activitySource, ILogger<Worker> logger) : BackgroundService
+public partial class Worker(ApiClient client, ActivitySource activitySource, ILogger<Worker> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -25,6 +26,7 @@ public partial class Worker(ActivitySource activitySource, ILogger<Worker> logge
                 {
                     using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
                     {
+                        var result = await client.WeatherForecast_GetAsync(stoppingToken);
                         await Task.Delay(TimeSpan.FromSeconds(0.2), stoppingToken);
                     }
                     using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))

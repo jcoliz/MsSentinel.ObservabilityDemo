@@ -55,7 +55,7 @@
       "serializeTypeInformation": false,
       "queryNullValue": "",
       "className": "ApiClient",
-      "operationGenerationMode": "MultipleClientsFromOperationId",
+      "operationGenerationMode": "SingleClientFromOperationId",
       "additionalNamespaceUsages": [],
       "additionalContractNamespaceUsages": [],
       "generateOptionalParameters": false,

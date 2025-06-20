@@ -1,6 +1,6 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var apiService = builder.AddProject<Projects.MsSentinel_ObservabilityDemo_ApiService>("apiservice")
+var apiService = builder.AddProject<Projects.MsSentinel_ObservabilityDemo_ApiService>("ApiService")
     .WithEnvironment("Logging__Console__FormatterName","systemd");
 
 builder.AddProject<Projects.MsSentinel_ObservabilityDemo_RestApiPoller>("RestApiPoller")
@@ -15,4 +15,4 @@ builder.AddProject<Projects.MsSentinel_ObservabilityDemo_Web>("webfrontend")
     .WaitFor(apiService);
 #endif
 
-builder.Build().Run();
+await builder.Build().RunAsync();
