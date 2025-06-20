@@ -1,6 +1,8 @@
+using System.Runtime.CompilerServices;
+
 namespace MsSentinel.ObservabilityDemo.RestApiPoller;
 
-public class Worker : BackgroundService
+public partial class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
 
@@ -13,11 +15,11 @@ public class Worker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            }
+            logOk();
             await Task.Delay(1000, stoppingToken);
         }
     }
+
+    [LoggerMessage(1, LogLevel.Information, "{Location}: OK")]
+    private partial void logOk([CallerMemberName] string? location = null);
 }
