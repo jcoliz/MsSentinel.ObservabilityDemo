@@ -1,0 +1,872 @@
+openapi: 3.1.0
+info:
+  title: "Microsoft Sentinel mock API for connector testing"
+  version: 0.0.1
+paths:
+  '/admin/failures':
+    post:
+      operationId: Admin_SetFailureStates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FailureModesSpecification'
+      responses:
+        204:
+          description: No content
+  '/web/api/v2.1/activities':
+    get:
+      operationId: SyntheticS1_GetActivities
+      parameters:
+        - name: User-Agent
+          in: header
+          schema:
+            type: string
+        - name: createdAt__gt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: createdAt__lt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAt__gt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAt__lt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Activities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityResponse'
+  '/web/api/v2.1/agents':
+    get:
+      operationId: SyntheticS1_GetAgents
+      parameters:
+        - name: createdAt__gt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: createdAt__lt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAt__gt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAt__lt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Activities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponse'
+  '/web/api/v2.1/cloud-detection/alerts':
+    get:
+      operationId: SyntheticS1_GetAlerts
+      parameters:
+        - name: createdAt__gt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: createdAt__lt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAt__gt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAt__lt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Activities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertResponse'
+  '/web/api/v2.1/threats':
+    get:
+      operationId: SyntheticS1_GetThreats
+      parameters:
+        - name: createdAt__gt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: createdAt__lt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAt__gt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAt__lt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Activities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreatResponse'
+  '/v1/triage-item-events':
+    get:
+      operationId: SyntheticDS_GetTriageEvents
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Triage events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriageEventResponse'
+  '/v1/triage-items':
+    get:
+      operationId: SyntheticDS_GetTriageItems
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+            format: guid
+      responses:
+        200:
+          description: Triage events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriageItemResponse'
+  '/v1/alerts':
+    get:
+      operationId: SyntheticDS_GetTriageAlerts
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+            format: guid
+      responses:
+        200:
+          description: Alerts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriageAlertResponse'            
+  '/v2/experimental/gnql':
+    get:
+      operationId: SyntheticGN_Query
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: scroll
+          in: query
+          schema:
+            type: string
+        - name: size
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Query results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GnqlResponse'
+  '/web/api/v2.1/groups':
+    get:
+      operationId: SyntheticS1_GetGroups
+      parameters:
+        - name: createdAt__gt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: createdAt__lt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAt__gt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAt__lt
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Activities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupsResponse'
+components:
+  schemas:
+    FailureModesSpecification:
+      type: object
+      additionalProperties: false
+      properties:
+        threats:
+          type: integer
+        groups:
+          type: integer
+        alerts:
+          type: integer
+    ActivityResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Custom-SentinelOneActivities_API'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AgentResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Custom-SentinelOneAgents_API'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AlertResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Custom-SentinelOneAlerts_API'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    ThreatResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Custom-SentinelOneThreats_API'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    GroupsResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Custom-SentinelOneGroups_API'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    TriageEventResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items: 
+            $ref: '#/components/schemas/TriageEvent'
+    TriageItemResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          items: 
+            $ref: '#/components/schemas/TriageItem'
+    TriageAlertResponse:
+      type: array
+      items: 
+        $ref: '#/components/schemas/TriageAlert'
+    GnqlResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        complete:
+          type: boolean
+        scroll:
+          type: string
+        query:
+          type: string
+        count:
+          type: integer
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GnqlItem'
+    Pagination:
+      type: object
+      additionalProperties: false
+      properties:
+        nextCursor:
+          type: integer
+    Group:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: guid
+          description: The unique identifier for the object.
+        updatedAt:
+          type: string
+          format: date-time
+          description: The timestamp (UTC) when the record was last updated.
+        createdAt:
+          type: string
+          format: date-time
+          description: The timestamp (UTC) when the record was created.
+    AlertInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+          description: The timestamp (UTC) when the record was created.
+    Custom-SentinelOneActivities_API:
+      type: object
+      additionalProperties: false
+      description: source | project TimeGenerated = createdAt, AgentUpdatedVersion = agentUpdatedVersion, UserId = userId, ThreatId = threatId, PrimaryDescription = primaryDescription, SecondaryDescription = secondaryDescription, Id = id, GroupId = groupId, CreatedAt = createdAt, AccountName = accountName, Data = data, AgentId = agentId, Hash = hash, UpdatedAt = todatetime(updatedAt), Description = description, ActivityUuid = activityUuid, SiteId = siteId, ActivityType = activityType, SiteName = siteName, AccountId = accountId, OsFamily = osFamily, GroupName = groupName, Comments = comments
+      properties:
+        agentUpdatedVersion:
+          description: The version of the agent that was updated.
+          type: string
+        userId:
+          description: The unique identifier for the user.
+          type: string
+          format: guid
+        threatId:
+          description: The unique identifier for the threat.
+          type: string
+          format: guid
+        primaryDescription:
+          description: The primary description of the event.
+          type: string
+        secondaryDescription:
+          description: The secondary description of the event.
+          type: string
+        id:
+          description: The unique identifier for the record.
+          type: string
+          format: guid
+        groupId:
+          description: The unique identifier for the group.
+          type: string
+          format: guid
+        createdAt:
+          description: The timestamp (UTC) when the record was created.
+          type: string
+          format: date-time
+        accountName:
+          description: The name of the account associated with the event.
+          type: string
+        data:
+          description: Activity metadata.
+          type: string
+        agentId:
+          description: The unique identifier for the agent. (Modified to send in version#)
+          type: string
+        hash:
+          description: The hash associated with the event.
+          type: string
+        updatedAt:
+          description: The timestamp (UTC) when the record was last updated.
+          type: string
+          format: date-time
+        description:
+          description: The description of the event.
+          type: string
+        activityUuid:
+          description: The UUID of the activity associated with the event.
+          type: string
+        siteId:
+          description: The unique identifier for the site.
+          type: string
+          format: guid
+        activityType:
+          description: The type of activity represented by an integer.
+          type: integer
+        siteName:
+          description: The name of the site associated with the event.
+          type: string
+        accountId:
+          description: The unique identifier for the account.
+          type: string
+          format: guid
+        osFamily:
+          description: The operating system family, such as macOS.
+          type: string
+        groupName:
+          description: The name of the group associated with the event.
+          type: string
+        comments:
+          description: Any comments associated with the event.
+          type: string
+    Custom-SentinelOneAgents_API:
+      type: object
+      additionalProperties: false
+      description: source | project TimeGenerated = createdAt, Uuid = uuid, MitigationMode = mitigationMode, NetworkStatus = networkStatus, InstallerType = installerType, MitigationModeSuspicious = mitigationModeSuspicious, IsPendingUninstall = isPendingUninstall, InRemoteShellSession = inRemoteShellSession, LastLoggedInUserName = lastLoggedInUserName, OsRevision = osRevision, OsArch = osArch, Id = id, ComputerName = computerName, TotalMemory = totalMemory, CreatedAt = createdAt, GroupId = groupId, LastActiveDate = todatetime(lastActiveDate), FullDiskScanLastUpdatedAt = fullDiskScanLastUpdatedAt, AllowRemoteShell = allowRemoteShell, RangerVersion = rangerVersion, AccountName = accountName, ScanStatus = scanStatus, Domain = domain, MissingPermissions = missingPermissions, IsActive = isActive, GroupIp = groupIp, ThreatRebootRequired = threatRebootRequired, GroupUpdatedAt = groupUpdatedAt, ExternalId = externalId, MachineType = machineType, RegisteredAt = todatetime(registeredAt), AppsVulnerabilityStatus = appsVulnerabilityStatus, CoreCount = coreCount, Locations = locations, ScanFinishedAt = todatetime(scanFinishedAt), UpdatedAt = todatetime(updatedAt), ExternalIp = externalIp, LocationType = locationType, PolicyUpdatedAt = policyUpdatedAt, IsDecommissioned = isDecommissioned, CpuId = cpuId, NetworkInterfaces = networkInterfaces, IsUninstalled = isUninstalled, ActiveDirectory = activeDirectory, ScanStartedAt = todatetime(scanStartedAt), RangerStatus = rangerStatus, SiteId = siteId, AgentVersion = agentVersion, OsUsername = osUsername, EncryptedApplications = encryptedApplications, LastIpToMgmt = lastIpToMgmt, CpuCount = cpuCount, ScanAbortedAt = scanAbortedAt, SiteName = siteName, ActiveThreats = activeThreats, Infected = infected, ConsoleMigrationStatus = consoleMigrationStatus, OsType = osType, AccountId = accountId, GroupName = groupName, OsName = osName, IsUpToDate = isUpToDate, LicenseKey = licenseKey, UserActionsNeeded = userActionsNeeded, ModelName = modelName, OsStartTime = todatetime(osStartTime), NetworkQuarantineEnabled=networkQuarantineEnabled,OperationalStateExpiration=operationalStateExpiration,RemoteProfilingState=remoteProfilingState
+      properties:
+        uuid:
+          description: The unique identifier for the object.
+          type: string
+          format: guid
+        mitigationMode:
+          description: The mitigation mode applied.
+          type: string
+        networkStatus:
+          description: The network status of the object.
+          type: string
+        installerType:
+          description: The type of installer used.
+          type: string
+        mitigationModeSuspicious:
+          description: The suspicious mitigation mode applied.
+          type: string
+        isPendingUninstall:
+          description: Indicates whether the object is pending uninstallation.
+          type: boolean
+        inRemoteShellSession:
+          description: Indicates whether the object is in a remote shell session.
+          type: boolean
+        lastLoggedInUserName:
+          description: The username of the last logged-in user.
+          type: string
+        osRevision:
+          description: The OS revision.
+          type: string
+        osArch:
+          description: The OS architecture.
+          type: string
+        id:
+          description: The unique identifier for the object.
+          type: string
+          format: guid
+        computerName:
+          description: The name of the computer.
+          type: string
+        totalMemory:
+          description: The total memory available in MB.
+          type: number
+          format: double
+        createdAt:
+          description: The timestamp (UTC) when the object was created.
+          type: string
+          format: date-time
+        groupId:
+          description: The unique identifier for the group.
+          type: string
+          format: guid
+        lastActiveDate:
+          description: The timestamp (UTC) when the object was last active.
+          type: string
+          format: date-time
+        fullDiskScanLastUpdatedAt:
+          description: The timestamp (UTC) when the full disk scan was last updated.
+          type: string
+          format: date-time
+        allowRemoteShell:
+          description: Indicates whether remote shell is allowed.
+          type: boolean
+        rangerVersion:
+          description: The version of the ranger.
+          type: string
+        accountName:
+          description: The account name.
+          type: string
+        scanStatus:
+          description: The scan status of the object.
+          type: string
+        domain:
+          description: The domain of the object.
+          type: string
+        missingPermissions:
+          description: Details of the missing permissions.
+          type: string
+        isActive:
+          description: Indicates whether the object is active.
+          type: boolean
+        groupIp:
+          description: The IP address of the group.
+          type: string
+        threatRebootRequired:
+          description: Indicates whether a reboot is required due to a threat.
+          type: boolean
+        groupUpdatedAt:
+          description: The timestamp (UTC) when the group was last updated.
+          type: string
+          format: date-time
+        externalId:
+          description: The external identifier associated with the object.
+          type: string
+        machineType:
+          description: The type of machine.
+          type: string
+        registeredAt:
+          description: The timestamp (UTC) when the object was registered.
+          type: string
+          format: date-time
+        appsVulnerabilityStatus:
+          description: The vulnerability status of the applications.
+          type: string
+        coreCount:
+          description: The number of CPU cores.
+          type: integer
+        locations:
+          description: The locations associated with the object.
+          type: string
+        scanFinishedAt:
+          description: The timestamp (UTC) when the scan was finished.
+          type: string
+          format: date-time
+        updatedAt:
+          description: The timestamp (UTC) when the object was last updated.
+          type: string
+          format: date-time
+        externalIp:
+          description: The external IP address of the object.
+          type: string
+        locationType:
+          description: The type of location.
+          type: string
+        policyUpdatedAt:
+          description: The timestamp (UTC) when the policy was last updated.
+          type: string
+          format: date-time
+        isDecommissioned:
+          description: Indicates whether the object is decommissioned.
+          type: boolean
+        cpuId:
+          description: The identifier of the CPU.
+          type: string
+        networkInterfaces:
+          description: Details of the network interfaces.
+          type: string
+        isUninstalled:
+          description: Indicates whether the object is uninstalled.
+          type: boolean
+        activeDirectory:
+          description: Details about the active directory.
+          type: string
+        scanStartedAt:
+          description: The timestamp (UTC) when the scan was started.
+          type: string
+          format: date-time
+        rangerStatus:
+          description: The status of the ranger.
+          type: string
+        siteId:
+          description: The unique identifier for the site.
+          type: string
+          format: guid
+        agentVersion:
+          description: The version of the agent.
+          type: string
+        osUsername:
+          description: The username associated with the operating system.
+          type: string
+        encryptedApplications:
+          description: Indicates whether the applications are encrypted.
+          type: boolean
+        lastIpToMgmt:
+          description: The last IP address used for management.
+          type: string
+        cpuCount:
+          description: The number of CPUs.
+          type: integer
+        scanAbortedAt:
+          description: The timestamp (UTC) when the scan was aborted.
+          type: string
+          format: date-time
+        siteName:
+          description: The name of the site.
+          type: string
+        activeThreats:
+          description: The number of active threats.
+          type: integer
+        infected:
+          description: Indicates whether the object is infected.
+          type: boolean
+        consoleMigrationStatus:
+          description: The status of the console migration.
+          type: string
+        osType:
+          description: The type of operating system.
+          type: string
+        accountId:
+          description: The unique identifier for the account.
+          type: string
+          format: guid
+        groupName:
+          description: The name of the group.
+          type: string
+        osName:
+          description: The name of the operating system.
+          type: string
+        isUpToDate:
+          description: Indicates whether the object is up to date.
+          type: boolean
+        licenseKey:
+          description: The license key associated with the object.
+          type: string
+        userActionsNeeded:
+          description: Details of the user actions needed.
+          type: string
+        modelName:
+          description: The model name of the object.
+          type: string
+        networkQuarantineEnabled:
+          description: Is Network Quarantine Enabled on the device
+          type: boolean
+        operationalStateExpiration:
+          description: Agent operational state.
+          type: string
+        remoteProfilingState:
+          description: Agent remote profiling state.
+          type: string
+        osStartTime:
+          description: The Start time of the os.
+          type: string
+    Custom-SentinelOneAlerts_API:
+      type: object
+      additionalProperties: false
+      description: source | project TimeGenerated = todatetime(parse_json(todynamic(alertInfo)).createdAt), SourceProcessInfo = sourceProcessInfo, AlertInfo = alertInfo, AgentDetectionInfo = agentDetectionInfo, RuleInfo = ruleInfo, ContainerInfo = containerInfo, SourceParentProcessInfo = sourceParentProcessInfo, TargetProcessInfo = targetProcessInfo, KubernetesInfo = kubernetesInfo
+      properties:
+        sourceProcessInfo:
+          description: Information about the source process.
+          type: string
+        alertInfo:
+          description: Details about the alert. (Updated with defined schema)
+          $ref: '#/components/schemas/AlertInfo'
+        agentDetectionInfo:
+          description: Detection information related to the agent.
+          type: string
+        ruleInfo:
+          description: Information regarding the applied rule.
+          type: string
+        containerInfo:
+          description: Information about the container.
+          type: string
+        sourceParentProcessInfo:
+          description: Information about the parent process of the source.
+          type: string
+        targetProcessInfo:
+          description: Details regarding the target process.
+          type: string
+        kubernetesInfo:
+          description: Kubernetes-related information.
+          type: string
+    Custom-SentinelOneGroups_API:
+      type: object
+      additionalProperties: false
+      description: source | project TimeGenerated = createdAt, Creator = creator, RegistrationToken = registrationToken, IsDefault = tostring(isDefault), UpdatedAt = todatetime(updatedAt), TotalAgents = tostring(totalAgents), Inherits = tostring(inherits), Name = name, Rank = rank, FilterName = filterName, GroupType = type, Id = id, CreatedAt = createdAt, CreatorId = creatorId, SiteId = siteId, FilterId = filterId
+      properties:
+        creator:
+          description: The name of the creator.
+          type: string
+        registrationToken:
+          description: The token used for registration.
+          type: string
+        isDefault:
+          description: Indicates whether this is the default setting.
+          type: boolean
+        updatedAt:
+          description: The timestamp (UTC) when the object was last updated.
+          type: string
+          format: date-time
+        totalAgents:
+          description: The total number of agents.
+          type: integer
+        inherits:
+          description: Indicates whether the object inherits properties.
+          type: boolean
+        name:
+          description: The name of the object.
+          type: string
+        rank:
+          description: The rank of the object.
+          type: number
+          format: double
+        filterName:
+          description: The name of the filter applied.
+          type: string
+        type:
+          description: The type of the object.
+          type: string
+        id:
+          description: The unique identifier for the object.
+          type: string
+          format: guid
+        createdAt:
+          description: The timestamp (UTC) when the object was created.
+          type: string
+          format: date-time
+        creatorId:
+          description: The unique identifier of the creator.
+          type: string
+          format: guid
+        siteId:
+          description: The unique identifier of the site.
+          type: string
+          format: guid
+        filterId:
+          description: The unique identifier of the filter.
+          type: string
+          format: guid
+    Custom-SentinelOneThreats_API:
+      type: object
+      additionalProperties: false
+      description: source | extend ThreatInfo = parse_json(todynamic(threatInfo)), AgentDetectionInfo=parse_json(todynamic(agentDetectionInfo)), AgentRealtimeInfo=parse_json(todynamic(agentRealtimeInfo)) | project TimeGenerated = todatetime(ThreatInfo.createdAt), FilePath = tostring(ThreatInfo.filePath), CloudVerdict = tostring(ThreatInfo.cloudVerdict), MitigationMode = tostring(AgentDetectionInfo.mitigationMode), AgentOsType = tostring(AgentRealtimeInfo.agentOsType), AgentInfected = tobool(AgentRealtimeInfo.agentInfected), InitiatingUserId = tostring(ThreatInfo.initiatingUserId), Engines = tostring(ThreatInfo.engines), Id = id, FileExtensionType = tostring(ThreatInfo.fileExtensionType), MitigationStatus = tostring(ThreatInfo.mitigationStatus), AgentDomain = tostring(AgentDetectionInfo.agentDomain), CreatedAt = todatetime(ThreatInfo.createdAt), IsCertValid = tobool(ThreatInfo.isValidCertificate), FileDisplayName = tostring(ThreatInfo.filePath), AgentIp = tostring(AgentDetectionInfo.agentIpV4), AccountName = tostring(AgentRealtimeInfo.accountName), AgentMachineType = tostring(AgentRealtimeInfo.agentMachineType), FileVerificationType = tostring(ThreatInfo.fileVerificationType), Indicators = indicators, InitiatedByDescription = tostring(ThreatInfo.initiatedByDescription), AutomaticallyResolved = tobool(ThreatInfo.automaticallyResolved), AgentId = tostring(AgentRealtimeInfo.agentId), ProcessArguments = tostring(ThreatInfo.maliciousProcessArguments), MitigationReport = tostring(AgentDetectionInfo.mitigationReport), ThreatName = tostring(ThreatInfo.threatName), ClassificationSource = tostring(ThreatInfo.classificationSource), UpdatedAt = todatetime(ThreatInfo.updatedAt), InitiatedBy = tostring(ThreatInfo.initiatedBy), AgentNetworkStatus = tostring(AgentRealtimeInfo.agentNetworkStatus), AgentComputerName = tostring(AgentRealtimeInfo.agentComputerName), Classification = tostring(ThreatInfo.classification), CertId = tostring(ThreatInfo.certificateId), AgentIsActive = tobool(AgentRealtimeInfo.agentIsActive), SiteId = tostring(AgentDetectionInfo.siteId), AgentVersion = tostring(AgentDetectionInfo.agentVersion), FileContentHash = tostring(ThreatInfo.md5), WhiteningOptions = whiteningOptions,FileSha256 = tostring(ThreatInfo.sha256), Username = tostring(ThreatInfo.initiatingUsername), AgentIsDecommissioned = tobool(AgentDetectionInfo.agentIsDecommissioned), CollectionId = tostring(ThreatInfo.collectionId), SiteName = tostring(AgentDetectionInfo.siteName), AccountId = tostring(AgentDetectionInfo.accountId), ThreatInfo, AgentDetectionInfo, AgentRealtimeInfo
+      properties:
+        threatInfo:
+          description: The information regarding the threat.
+          type: string
+        agentDetectionInfo:
+          description: The information of the agent on detectino.
+          type: string
+        agentRealtimeInfo:
+          description: The information of the agent in real time.
+          type: string
+        indicators:
+          description: Details of the indicators.
+          type: string
+        whiteningOptions:
+          description: Details of the whitening options.
+          type: string
+        id:
+          description: Event Id.
+          type: string
+    TriageAlert:
+      type: object
+      additionalProperties: false
+      properties:
+        triage:
+          $ref: '#/components/schemas/Custom-SentinelOneThreats_API'
+        items:
+          $ref: '#/components/schemas/Custom-SentinelOneAgents_API'
+        alerts:
+          $ref: '#/components/schemas/Custom-SentinelOneAlerts_API'
+    TriageEvent:
+      type: object
+      additionalProperties: false
+      properties:
+        triage-item-id:
+          type: string
+          format: guid
+          description: The unique identifier for the object.
+    TriageItem:
+      type: object
+      additionalProperties: false
+      properties:
+        source:
+          $ref: '#/components/schemas/TriageItemSource'
+    TriageItemSource:
+      type: object
+      additionalProperties: false
+      properties:
+        alert-id:
+          type: string
+          format: guid
+          description: The unique identifier for the alert
+    GnqlItem:
+      type: object
+      additionalProperties: false
+      properties:
+        ip:
+          type: string
+        seen:
+          type: boolean
+        classification:
+          type: string
+        
