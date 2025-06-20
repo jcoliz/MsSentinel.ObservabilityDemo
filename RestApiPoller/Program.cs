@@ -1,6 +1,6 @@
 using System.Diagnostics;
-using MsSentinel.ObservabilityDemo.ApiService;
 using MsSentinel.ObservabilityDemo.DataCollectionRule;
+using MsSentinel.ObservabilityDemo.MockApi;
 using MsSentinel.ObservabilityDemo.RestApiPoller;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -13,11 +13,11 @@ builder.Services.AddHostedService<Worker>();
 builder.Services.AddSingleton(
     new ActivitySource("MsSentinel.ObservabilityDemo.RestApiPoller", "1.0.0"));
 
-builder.Services.AddHttpClient<ApiServiceClient>(client =>
+builder.Services.AddHttpClient<MockApiClient>(client =>
     {
         // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
         // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-        client.BaseAddress = new("https+http://ApiService");
+        client.BaseAddress = new("https+http://MockApi");
     });
 
 builder.Services.AddHttpClient<DcrApiClient>(client =>

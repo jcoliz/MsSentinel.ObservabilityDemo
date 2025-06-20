@@ -20,11 +20,18 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
     static readonly string[] _triggers = [ "https://wut.ru/", "1A2DC56F8", "http://threats.gov/", "5F8AS321" ];
 
-    public Task<SwaggerResponse<ActivityResponse>> GetActivitiesAsync(string? userAgent, DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
+    public async Task<SwaggerResponse<ActivityResponse>> GetActivitiesAsync(string? userAgent, DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
     {
         using var activity = activitySource.StartActivity("GetActivitiesAsync", ActivityKind.Server);
 
         logUserAgent(userAgent ?? "none");
+
+        await Task.Delay(TimeSpan.FromSeconds(0.1));
+        using (var activity_db = activitySource.StartActivity("Database", ActivityKind.Consumer))
+        {
+            await Task.Delay(TimeSpan.FromSeconds(0.7));
+        }
+        await Task.Delay(TimeSpan.FromSeconds(0.1));
 
         var count = limit.HasValue ? Math.Min(limit.Value,numRecordsPerPage) : numRecordsPerPage;
         var first = cursor ?? 0;
@@ -57,7 +64,7 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
             Pagination = last < maxRecords ? new Pagination() { NextCursor = last} : null
         };
 
-        return Task.FromResult(new SwaggerResponse<ActivityResponse>(StatusCodes.Status200OK, emptyHeaders, response));
+        return new SwaggerResponse<ActivityResponse>(StatusCodes.Status200OK, emptyHeaders, response);
     }
 
     private static string pick(string[] from, int x)

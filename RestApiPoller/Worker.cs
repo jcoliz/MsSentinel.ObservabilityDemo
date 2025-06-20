@@ -5,7 +5,7 @@ using MsSentinel.ObservabilityDemo.DataCollectionRule;
 
 namespace MsSentinel.ObservabilityDemo.RestApiPoller;
 
-public partial class Worker(ApiServiceClient client,
+public partial class Worker(MockApi.MockApiClient client,
     DcrApiClient dataCollectionRuleClient,
     ActivitySource activitySource, ILogger<Worker> logger) : BackgroundService
 {
@@ -29,7 +29,9 @@ public partial class Worker(ApiServiceClient client,
                 {
                     using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
                     {
-                        _ = await client.WeatherForecast_GetAsync(stoppingToken);
+                        _ = await client.SyntheticS1_GetActivitiesAsync(
+                            "MsSentinel.ObservabilityDemo.RestApiPoller/1.0.0",
+                            null, null, null, null, null, null, stoppingToken);
                     }
                     using (var activity_2 = activitySource.StartActivity("Extract", ActivityKind.Consumer))
                     {
@@ -46,7 +48,9 @@ public partial class Worker(ApiServiceClient client,
                 {
                     using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
                     {
-                        _ = await client.WeatherForecast_GetAsync(stoppingToken);
+                        _ = await client.SyntheticS1_GetActivitiesAsync(
+                            "MsSentinel.ObservabilityDemo.RestApiPoller/1.0.0",
+                            null, null, null, null, null, null, stoppingToken);
                     }
                     using (var activity_2 = activitySource.StartActivity("Extract", ActivityKind.Consumer))
                     {
