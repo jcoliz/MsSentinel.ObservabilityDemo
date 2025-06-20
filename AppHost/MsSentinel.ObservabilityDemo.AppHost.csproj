@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MsSentinel.ObservabilityDemo.ApiService\MsSentinel.ObservabilityDemo.ApiService.csproj" />
+    <ProjectReference Include="..\ApiService\MsSentinel.ObservabilityDemo.ApiService.csproj" />
   </ItemGroup>
 
   <ItemGroup>

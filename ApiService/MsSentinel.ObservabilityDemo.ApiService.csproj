@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MsSentinel.ObservabilityDemo.ServiceDefaults\MsSentinel.ObservabilityDemo.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\ServiceDefaults\MsSentinel.ObservabilityDemo.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>
