@@ -26,13 +26,6 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
         logUserAgent(userAgent ?? "none");
 
-        await Task.Delay(TimeSpan.FromSeconds(0.1));
-        using (var activity_db = activitySource.StartActivity("Database", ActivityKind.Consumer))
-        {
-            await Task.Delay(TimeSpan.FromSeconds(0.7));
-        }
-        await Task.Delay(TimeSpan.FromSeconds(0.1));
-
         var count = limit.HasValue ? Math.Min(limit.Value,numRecordsPerPage) : numRecordsPerPage;
         var first = cursor ?? 0;
         var last = first + count;
@@ -55,6 +48,20 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
                 ActivityType = activityType(first + x)
             })
             .ToList();
+
+        await Task.Delay(TimeSpan.FromSeconds(0.1));
+        using (var activity_db = activitySource.StartActivity("Database", ActivityKind.Consumer))
+        {
+            activity_db?.SetTag("SQL.ResultsCount",data.Count);
+            activity_db?.SetTag("SQL.Command","SELECT * FROM Activities WHERE CreatedAt >= @createdAt__gt AMD CreatedAt < @createdAt__lt ORDER BY CreatedAt DESC OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY");
+            activity_db?.SetTag("SQL.Parameter.Offset", first);
+            activity_db?.SetTag("SQL.Parameter.Limit", count);
+            activity_db?.SetTag("SQL.Parameter.createdAt__gt", createdAt__gt);
+            activity_db?.SetTag("SQL.Parameter.createdAt__lt", createdAt__lt);
+
+            await Task.Delay(TimeSpan.FromSeconds(0.7));
+        }
+        await Task.Delay(TimeSpan.FromSeconds(0.1));
 
         logOkDetails(data.Count, createdAt__gt, createdAt__lt, updatedAt__gt, updatedAt__lt, limit, cursor);
 
@@ -141,39 +148,45 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
         return Task.FromResult(new SwaggerResponse<AgentResponse>(StatusCodes.Status200OK, emptyHeaders, new() { Data = data }));
     }
 
-    public Task<SwaggerResponse<AlertResponse>> GetAlertsAsync(DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
+    public async Task<SwaggerResponse<AlertResponse>> GetAlertsAsync(DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
     {
         using var activity = activitySource.StartActivity("GetAlertsAsync", ActivityKind.Server);
         
+        await Task.Delay(TimeSpan.FromSeconds(0.05));
+        using (var activity_db = activitySource.StartActivity("Database", ActivityKind.Consumer))
+        {
+            await Task.Delay(TimeSpan.FromSeconds(0.35));
+        }
+        await Task.Delay(TimeSpan.FromSeconds(0.05));
+
+
         if (failureModes.AlertsStatus != StatusCodes.Status200OK)
         {
             logFailureMode(failureModes.AlertsStatus);
-            return Task.FromResult(new SwaggerResponse<AlertResponse>(failureModes.AlertsStatus, emptyHeaders, new()));
+            return new SwaggerResponse<AlertResponse>(failureModes.AlertsStatus, emptyHeaders, new());
         }
 
         logOkDetails(1, createdAt__gt, createdAt__lt, updatedAt__gt, updatedAt__lt, limit, cursor);
 
-        return Task.FromResult
-        (
+        return 
             new SwaggerResponse<AlertResponse>
             (
-                StatusCodes.Status200OK, 
-                emptyHeaders, 
-                new () 
-                { 
-                    Data = 
-                    [ 
-                        new() 
+                StatusCodes.Status200OK,
+                emptyHeaders,
+                new()
+                {
+                    Data =
+                    [
+                        new()
                         {
                             AlertInfo = new()
                             {
                                 CreatedAt = createdAt__lt ?? DateTimeOffset.UtcNow
                             }
                         }
-                    ]                    
+                    ]
                 }
-            )
-        );
+            );
     }
 
     public Task<SwaggerResponse<GroupsResponse>> GetGroupsAsync(DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
