@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApiService\MsSentinel.ObservabilityDemo.ApiService.csproj" />
+    <ProjectReference Include="..\RestApiPoller\MsSentinel.ObservabilityDemo.RestApiPoller.csproj" />
   </ItemGroup>
 
   <ItemGroup>
