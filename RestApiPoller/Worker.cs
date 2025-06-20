@@ -9,19 +9,45 @@ public partial class Worker(ActivitySource activitySource, ILogger<Worker> logge
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            using var activity = activitySource.StartActivity("Run", ActivityKind.Consumer);
-            activity?.SetTag("MsSentinel.ObservabilityDemo.RestApiPoller.Location", nameof(Worker));
-
-            using (var activity_1 = activitySource.StartActivity("Request", ActivityKind.Consumer))
+            using (var activity = activitySource.StartActivity("Run", ActivityKind.Consumer))
             {
-                await Task.Delay(TimeSpan.FromSeconds(0.2), stoppingToken);
-                logOk();
+                activity?.SetTag("MsSentinel.ObservabilityDemo.RestApiPoller.Location", nameof(Worker));
+
+                using (var activity_1 = activitySource.StartActivity("Auth", ActivityKind.Consumer))
+                {
+                    using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(0.2), stoppingToken);
+                    }
+                }
+
+                using (var activity_1 = activitySource.StartActivity("Page", ActivityKind.Consumer))
+                {
+                    using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(0.2), stoppingToken);
+                    }
+                    using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(0.05), stoppingToken);
+                    }
+                }
+
+                using (var activity_1 = activitySource.StartActivity("Page", ActivityKind.Consumer))
+                {
+                    using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(0.2), stoppingToken);
+                        logOk();
+                    }
+                    using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(0.05), stoppingToken);
+                    }
+                }
             }
 
-            using (var activity_1 = activitySource.StartActivity("Wait", ActivityKind.Consumer))
-            {
-                await Task.Delay(1000, stoppingToken);
-            }
+            await Task.Delay(1000, stoppingToken);
         }
     }
 
