@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,9 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.PropertyNamingPolicy = null;
     options.SerializerOptions.WriteIndented = true;
 });
+
+builder.Services.AddSingleton(
+    new ActivitySource("MsSentinel.ObservabilityDemo.ApiService", "1.0.0"));
 
 var app = builder.Build();
 
