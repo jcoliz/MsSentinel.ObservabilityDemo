@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using MsSentinel.ObservabilityDemo.RestApiPoller;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -7,5 +8,8 @@ builder.AddServiceDefaults();
 
 builder.Services.AddHostedService<Worker>();
 
+builder.Services.AddSingleton(
+    new ActivitySource("MsSentinel.ObservabilityDemo.RestApiPoller", "1.0.0"));
+
 var host = builder.Build();
-host.Run();
+await host.RunAsync();
