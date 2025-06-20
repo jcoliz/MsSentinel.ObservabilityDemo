@@ -29,12 +29,15 @@ public partial class Worker(ApiServiceClient client,
                 {
                     using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
                     {
-                        var result = await client.WeatherForecast_GetAsync(stoppingToken);
-                        await Task.Delay(TimeSpan.FromSeconds(0.2), stoppingToken);
+                        _ = await client.WeatherForecast_GetAsync(stoppingToken);
+                    }
+                    using (var activity_2 = activitySource.StartActivity("Extract", ActivityKind.Consumer))
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(0.05), stoppingToken);
                     }
                     using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))
                     {
-                        await dataCollectionRuleClient.WeatherForecast_GetAsync(stoppingToken);                        
+                        await dataCollectionRuleClient.WeatherForecast_PostAsync([],stoppingToken);                        
                         await Task.Delay(TimeSpan.FromSeconds(0.05), stoppingToken);
                     }
                 }
@@ -43,15 +46,20 @@ public partial class Worker(ApiServiceClient client,
                 {
                     using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
                     {
-                        await Task.Delay(TimeSpan.FromSeconds(0.2), stoppingToken);
+                        _ = await client.WeatherForecast_GetAsync(stoppingToken);
+                    }
+                    using (var activity_2 = activitySource.StartActivity("Extract", ActivityKind.Consumer))
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(0.05), stoppingToken);
                     }
                     using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))
                     {
-                        await dataCollectionRuleClient.WeatherForecast_GetAsync(stoppingToken);                        
+                        await dataCollectionRuleClient.WeatherForecast_PostAsync([],stoppingToken);                        
                         await Task.Delay(TimeSpan.FromSeconds(0.05), stoppingToken);
                     }
-                    logOk();
                 }
+                
+                logOk();
             }
 
             await Task.Delay(1000, stoppingToken);

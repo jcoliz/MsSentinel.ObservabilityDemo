@@ -1,26 +1,30 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MsSentinel.ObservabilityDemo.DataCollectionRule.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WeatherForecastController : ControllerBase
+public class WeatherForecastController(ActivitySource activitySource, ILogger<WeatherForecastController> logger) : ControllerBase
 {
     private static readonly string[] Summaries = new[]
     {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    [HttpPost(Name = "PostToStream")]
+    public async Task<IEnumerable<WeatherForecast>> Post(string[] strings)
     {
-        _logger = logger;
-    }
+        using (var activity_1 = activitySource.StartActivity("Transform", ActivityKind.Consumer))
+        {
+            await Task.Delay(TimeSpan.FromSeconds(0.2));
+        }
 
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
-    {
+        using (var activity_2 = activitySource.StartActivity("Store", ActivityKind.Consumer))
+        {
+            await Task.Delay(TimeSpan.FromSeconds(0.3));
+        }
+
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
