@@ -1,10 +1,12 @@
-using System.Text.Json;
 using MsSentinel.MockApi.WebApi;
 using MsSentinel.MockApi.WebApi.Api;
 using MsSentinel.MockApi.WebApi.Application;
 using MsSentinel.MockApi.WebApi.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add service defaults & Aspire client integrations.
+builder.AddServiceDefaults();
 
 // Add services to the container.
 

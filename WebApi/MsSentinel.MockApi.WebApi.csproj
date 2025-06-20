@@ -10,8 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NSwag.AspNetCore" Version="14.2.0" />
-		<PackageReference Include="NSwag.MSBuild" Version="14.2.0">
+    <ProjectReference Include="..\ServiceDefaults\MsSentinel.ObservabilityDemo.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+		<PackageReference Include="NSwag.MSBuild" Version="14.4.0">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>

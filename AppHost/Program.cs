@@ -6,9 +6,14 @@ var apiService = builder.AddProject<Projects.MsSentinel_ObservabilityDemo_ApiSer
 var dcr = builder.AddProject<Projects.MsSentinel_ObservabilityDemo_DataCollectionRule>("DataCollectionRule")
     .WithEnvironment("Logging__Console__FormatterName","systemd");
 
+var mockApi = builder.AddProject<Projects.MsSentinel_MockApi_WebApi>("MockApi")
+    .WithEnvironment("Logging__Console__FormatterName","systemd");
+
 builder.AddProject<Projects.MsSentinel_ObservabilityDemo_RestApiPoller>("RestApiPoller")
     .WithReference(apiService)
     .WaitFor(apiService)
+    .WithReference(mockApi)
+    .WaitFor(mockApi)
     .WithReference(dcr)
     .WaitFor(dcr)
     .WithEnvironment("Logging__Console__FormatterName","systemd");
