@@ -1,10 +1,13 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using MsSentinel.ObservabilityDemo.ApiService.Client;
+using MsSentinel.ObservabilityDemo.ApiService;
+using MsSentinel.ObservabilityDemo.DataCollectionRule;
 
 namespace MsSentinel.ObservabilityDemo.RestApiPoller;
 
-public partial class Worker(ApiClient client, ActivitySource activitySource, ILogger<Worker> logger) : BackgroundService
+public partial class Worker(ApiServiceClient client,
+    DcrApiClient dataCollectionRuleClient,
+    ActivitySource activitySource, ILogger<Worker> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -31,6 +34,7 @@ public partial class Worker(ApiClient client, ActivitySource activitySource, ILo
                     }
                     using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))
                     {
+                        await dataCollectionRuleClient.WeatherForecast_GetAsync(stoppingToken);                        
                         await Task.Delay(TimeSpan.FromSeconds(0.05), stoppingToken);
                     }
                 }
@@ -40,12 +44,13 @@ public partial class Worker(ApiClient client, ActivitySource activitySource, ILo
                     using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
                     {
                         await Task.Delay(TimeSpan.FromSeconds(0.2), stoppingToken);
-                        logOk();
                     }
                     using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))
                     {
+                        await dataCollectionRuleClient.WeatherForecast_GetAsync(stoppingToken);                        
                         await Task.Delay(TimeSpan.FromSeconds(0.05), stoppingToken);
                     }
+                    logOk();
                 }
             }
 

@@ -54,7 +54,7 @@
       "useRequestAndResponseSerializationSettings": false,
       "serializeTypeInformation": false,
       "queryNullValue": "",
-      "className": "ApiClient",
+      "className": "DcrApiClient",
       "operationGenerationMode": "SingleClientFromOperationId",
       "additionalNamespaceUsages": [],
       "additionalContractNamespaceUsages": [],
@@ -69,7 +69,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "MsSentinel.ObservabilityDemo.DataCollectionRule.Client",
+      "namespace": "MsSentinel.ObservabilityDemo.DataCollectionRule",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,
@@ -104,7 +104,7 @@
       "templateDirectory": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../../RestApiPoller/DataCollectionRule_ApiClient.cs",
+      "output": "../../RestApiPoller/DcrApiClient.cs",
       "newLineBehavior": "Auto"
     }
   }
