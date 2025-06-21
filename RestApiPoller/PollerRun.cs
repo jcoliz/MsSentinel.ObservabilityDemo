@@ -102,6 +102,8 @@ public class GetUpdatedActivitiesRun(
             return true;
         }
 
+        List<string>? ingestData = null;
+
         using (var activity = ActivitySource.StartActivity("Extract", ActivityKind.Consumer))
         {
             NextCursor = response.Pagination?.NextCursor;
@@ -110,13 +112,25 @@ public class GetUpdatedActivitiesRun(
             activity?.SetTag("RestApiPoller.NextCursor", NextCursor);
             activity?.SetTag("RestApiPoller.Count", Count);
 
+            ingestData = response.Data
+                .Select(activity => activity.Id.ToString())
+                .ToList();
+
             // Simulate request processing
             await Task.Delay(TimeSpan.FromSeconds(0.05));
         }
 
+        if (ingestData == null || ingestData.Count == 0)
+        {
+            return true; // No more data to process
+        }
+
+        // Ingest the data into the Data Collection Rule
         using (var activity = ActivitySource.StartActivity("Ingest", ActivityKind.Consumer))
         {
-            await dataCollectionRuleClient.WeatherForecast_PostAsync([], CancellationToken.None);
+            activity?.SetTag("RestApiPoller.Count", ingestData.Count);
+
+            await dataCollectionRuleClient.WeatherForecast_PostAsync(ingestData, CancellationToken.None);
             await Task.Delay(TimeSpan.FromSeconds(0.05));
         }        
 
