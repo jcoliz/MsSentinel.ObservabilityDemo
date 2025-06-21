@@ -130,7 +130,7 @@ public class GetUpdatedActivitiesRun(
         {
             activity?.SetTag("RestApiPoller.Count", ingestData.Count);
 
-            await dataCollectionRuleClient.WeatherForecast_PostAsync(ingestData, CancellationToken.None);
+            await dataCollectionRuleClient.Ingest_PostAsync("Activities_CL",ingestData, CancellationToken.None);
             await Task.Delay(TimeSpan.FromSeconds(0.05));
         }        
 

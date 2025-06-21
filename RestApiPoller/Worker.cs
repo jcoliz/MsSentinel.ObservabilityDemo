@@ -74,7 +74,7 @@ public partial class Worker(MockApi.MockApiClient client,
                 }
                 using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))
                 {
-                    await dataCollectionRuleClient.WeatherForecast_PostAsync([], CancellationToken.None);
+                    //await dataCollectionRuleClient.WeatherForecast_PostAsync([], CancellationToken.None);
                     await Task.Delay(TimeSpan.FromSeconds(0.05));
                 }
             }
@@ -108,7 +108,7 @@ public partial class Worker(MockApi.MockApiClient client,
                 }
                 using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))
                 {
-                    await dataCollectionRuleClient.WeatherForecast_PostAsync([], CancellationToken.None);
+                    //await dataCollectionRuleClient.WeatherForecast_PostAsync([], CancellationToken.None);
                     await Task.Delay(TimeSpan.FromSeconds(0.05));
                 }
             }

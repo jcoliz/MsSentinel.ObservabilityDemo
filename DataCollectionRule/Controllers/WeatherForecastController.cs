@@ -5,34 +5,38 @@ namespace MsSentinel.ObservabilityDemo.DataCollectionRule.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WeatherForecastController(ActivitySource activitySource, ILogger<WeatherForecastController> logger) : ControllerBase
+public partial class IngestController(ActivitySource activitySource, ILogger<IngestController> logger) : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
+    [HttpPost(Name = "PostToTable")]
+    public async Task Post(string table, string[] strings)
     {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
-    [HttpPost(Name = "PostToStream")]
-    public async Task<IEnumerable<WeatherForecast>> Post(string[] strings)
-    {
-        using (var activity = activitySource.StartActivity("Transform", ActivityKind.Consumer))
+        try
         {
-            await Task.Delay(TimeSpan.FromSeconds(0.2));
+            using (var activity = activitySource.StartActivity("Transform", ActivityKind.Consumer))
+            {
+                await Task.Delay(TimeSpan.FromSeconds(0.2));
+            }
+
+            using (var activity = activitySource.StartActivity("Store", ActivityKind.Consumer))
+            {
+                activity?.SetTag("DataCollectionRule.Count", strings.Length);
+                activity?.SetTag("DataCollectionRule.Table", table);
+
+                await Task.Delay(TimeSpan.FromSeconds(0.3));
+
+                LogIngestedItemsOk(strings.Length, table);
+            }
         }
-
-        using (var activity = activitySource.StartActivity("Store", ActivityKind.Consumer))
+        catch (Exception ex)
         {
-            activity?.SetTag("DataCollectionRule.Count", strings.Length);            
-
-            await Task.Delay(TimeSpan.FromSeconds(0.3));
+            LogIngestedItemsError(ex);
+            throw;
         }
-
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
     }
+
+    [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "OK. Ingested {Count} items to {Table}")]
+    private partial void LogIngestedItemsOk(int count, string table);
+
+    [LoggerMessage(EventId = 2, Level = LogLevel.Error, Message = "Error while ingesting data")]
+    private partial void LogIngestedItemsError(Exception exception);
 }
