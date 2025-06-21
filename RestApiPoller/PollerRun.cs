@@ -36,7 +36,23 @@ public abstract class PollerRun
         }
     }
 
-    public abstract Task<bool> PageAsync(CancellationToken stoppingToken);
+    private int PageNumber { get; set; } = 1;
+    protected async Task<bool> PageAsync(CancellationToken stoppingToken)
+    {
+        bool done = true;
+        using (var activity = ActivitySource.StartActivity($"Page {PageNumber}", ActivityKind.Consumer))
+        {
+            activity?.SetTag("RestApiPoller.PageNumber", PageNumber);
+
+            done = await RequestAsync(stoppingToken);
+
+            ++PageNumber;
+        }
+
+        return done;
+    }
+
+    protected abstract Task<bool> RequestAsync(CancellationToken stoppingToken);
 
     protected void SetTag(string key, object value)
     {
@@ -63,25 +79,9 @@ public class GetUpdatedActivitiesRun(
 )
     : PollerRun(activitySource, "GetUpdatedActivities")
 {
-    private int PageNumber { get; set; } = 1;
     private int? NextCursor { get; set; }
 
-    public override async Task<bool> PageAsync(CancellationToken stoppingToken)
-    {
-        bool done = true;
-        using (var activity = ActivitySource.StartActivity($"Page {PageNumber}", ActivityKind.Consumer))
-        {
-            activity?.SetTag("RestApiPoller.PageNumber", PageNumber);
-
-            done = await RequestAsync(stoppingToken);
-
-            ++PageNumber;
-        }
-
-        return done;
-    }
-
-    public async Task<bool> RequestAsync(CancellationToken stoppingToken)
+    protected override async Task<bool> RequestAsync(CancellationToken stoppingToken)
     {
         MockApi.ActivityResponse? response = null;
 
