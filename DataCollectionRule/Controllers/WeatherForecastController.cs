@@ -15,13 +15,15 @@ public class WeatherForecastController(ActivitySource activitySource, ILogger<We
     [HttpPost(Name = "PostToStream")]
     public async Task<IEnumerable<WeatherForecast>> Post(string[] strings)
     {
-        using (var activity_1 = activitySource.StartActivity("Transform", ActivityKind.Consumer))
+        using (var activity = activitySource.StartActivity("Transform", ActivityKind.Consumer))
         {
             await Task.Delay(TimeSpan.FromSeconds(0.2));
         }
 
-        using (var activity_2 = activitySource.StartActivity("Store", ActivityKind.Consumer))
+        using (var activity = activitySource.StartActivity("Store", ActivityKind.Consumer))
         {
+            activity?.SetTag("DataCollectionRule.Count", strings.Length);            
+
             await Task.Delay(TimeSpan.FromSeconds(0.3));
         }
 
