@@ -12,12 +12,13 @@ public partial class Worker(MockApi.MockApiClient client,
     {
         while (!stoppingToken.IsCancellationRequested)
         {
+            var t0 = Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+
             var activitiesRun = new GetUpdatedActivitiesRun(client, dataCollectionRuleClient, activitySource);
             var alertsRun = new GetAlertsRun(client, dataCollectionRuleClient, activitySource);
 
-            var t0 = Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
             var t1 = activitiesRun.RunAsync(stoppingToken);
-            await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             var t2 = alertsRun.RunAsync(stoppingToken);
 
             await Task.WhenAll(t1, t2);
