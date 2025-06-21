@@ -181,7 +181,7 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
                         {
                             AlertInfo = new()
                             {
-                                CreatedAt = createdAt__lt ?? DateTimeOffset.UtcNow
+                                CreatedAt = createdAt__lt ?? DateTimeOffset.UtcNow                                
                             }
                         }
                     ]

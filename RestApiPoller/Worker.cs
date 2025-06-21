@@ -12,108 +12,18 @@ public partial class Worker(MockApi.MockApiClient client,
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var run = new GetUpdatedActivitiesRun(client, dataCollectionRuleClient, activitySource);
+            var activitiesRun = new GetUpdatedActivitiesRun(client, dataCollectionRuleClient, activitySource);
+            var alertsRun = new GetAlertsRun(client, dataCollectionRuleClient, activitySource);
 
-            await run.RunAsync(stoppingToken);
+            var t1 = activitiesRun.RunAsync(stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+            var t2 = alertsRun.RunAsync(stoppingToken);
 
-            await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
-        }
-    }
-
-    private async Task ProcessSingleRun(string name, CancellationToken stoppingToken)
-    {
-        using (var activity = activitySource.StartActivity($"Run {name}", ActivityKind.Consumer))
-        {
-            var now = DateTimeOffset.UtcNow;
-            activity?.SetTag("RestApiPoller.Name", name);
-            activity?.SetTag("RestApiPoller.QueryWindowStartTime", now - TimeSpan.FromMinutes(5));
-            activity?.SetTag("RestApiPoller.QueryWindowEndTime", now);
-
-            using (var activity_1 = activitySource.StartActivity("Auth", ActivityKind.Consumer))
-            {
-                using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(0.2));
-                }
-            }
-
-            using (var activity_1 = activitySource.StartActivity("Page 1", ActivityKind.Consumer))
-            {
-                activity_1?.SetTag("RestApiPoller.PageNumber", 1);
-
-                int? NextCursor = null;
-                int? Count = null;
-
-                using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
-                {
-                    if (name == "GetUpdatedActivities")
-                    {
-                        activity_2?.SetTag("RestApiPoller.Parameter.createdAt__gt", now - TimeSpan.FromMinutes(5));
-                        activity_2?.SetTag("RestApiPoller.Parameter.createdAt__lt", now);
-                        activity_2?.SetTag("RestApiPoller.Parameter.limit", 12);
-
-                        var response = await client.SyntheticS1_GetActivitiesAsync(
-                            "MsSentinel.ObservabilityDemo.RestApiPoller/1.0.0",
-                            null, null, null, null, null, null, stoppingToken);
-
-                        NextCursor = response.Pagination.NextCursor;
-                        Count = response.Data.Count;
-                    }
-                    else if (name == "GetAlerts")
-                    {
-                        _ = await client.SyntheticS1_GetAlertsAsync(
-                            null, null, null, null, null, null, stoppingToken);
-                    }
-                }
-                using (var activity_2 = activitySource.StartActivity("Extract", ActivityKind.Consumer))
-                {
-                    activity_2?.SetTag("RestApiPoller.NextCursor", NextCursor);
-                    activity_2?.SetTag("RestApiPoller.Count", Count);
-
-                    await Task.Delay(TimeSpan.FromSeconds(0.05));
-                }
-                using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))
-                {
-                    //await dataCollectionRuleClient.WeatherForecast_PostAsync([], CancellationToken.None);
-                    await Task.Delay(TimeSpan.FromSeconds(0.05));
-                }
-            }
-
-            using (var activity_1 = activitySource.StartActivity("Page 2", ActivityKind.Consumer))
-            {
-                activity_1?.SetTag("RestApiPoller.PageNumber", 2);
-
-                using (var activity_2 = activitySource.StartActivity("Request", ActivityKind.Consumer))
-                {
-                    if (name == "GetUpdatedActivities")
-                    {
-                        activity_2?.SetTag("RestApiPoller.Parameter.createdAt__gt", now - TimeSpan.FromMinutes(5));
-                        activity_2?.SetTag("RestApiPoller.Parameter.createdAt__lt", now);
-                        activity_2?.SetTag("RestApiPoller.Parameter.limit", 12);
-                        activity_2?.SetTag("RestApiPoller.Parameter.cursor", 12);
-
-                        _ = await client.SyntheticS1_GetActivitiesAsync(
-                            "MsSentinel.ObservabilityDemo.RestApiPoller/1.0.0",
-                            null, null, null, null, null, null, stoppingToken);
-                    }
-                    else if (name == "GetAlerts")
-                    {
-                        _ = await client.SyntheticS1_GetAlertsAsync(
-                            null, null, null, null, null, null, stoppingToken);
-                    }
-                }
-                using (var activity_2 = activitySource.StartActivity("Extract", ActivityKind.Consumer))
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(0.05));
-                }
-                using (var activity_2 = activitySource.StartActivity("Ingest", ActivityKind.Consumer))
-                {
-                    //await dataCollectionRuleClient.WeatherForecast_PostAsync([], CancellationToken.None);
-                    await Task.Delay(TimeSpan.FromSeconds(0.05));
-                }
-            }
+            await Task.WhenAll(t1, t2);
 
             logOk();
+
+            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
         }
     }
 

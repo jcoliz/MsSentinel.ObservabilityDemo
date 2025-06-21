@@ -130,7 +130,73 @@ public class GetUpdatedActivitiesRun(
         {
             activity?.SetTag("RestApiPoller.Count", ingestData.Count);
 
-            await dataCollectionRuleClient.Ingest_PostAsync("Activities_CL",ingestData, CancellationToken.None);
+            await dataCollectionRuleClient.Ingest_PostAsync("Activities_CL", ingestData, CancellationToken.None);
+            await Task.Delay(TimeSpan.FromSeconds(0.05));
+        }
+
+        return NextCursor == null || NextCursor <= 0;
+    }
+}
+
+
+public class GetAlertsRun(
+    MockApi.MockApiClient client,
+    DcrApiClient dataCollectionRuleClient,
+    ActivitySource activitySource
+)
+    : PollerRun(activitySource, "GetAlerts")
+{
+    private int? NextCursor { get; set; }
+
+    protected override async Task<bool> RequestAsync(CancellationToken stoppingToken)
+    {
+        MockApi.AlertResponse? response = null;
+
+        using (var activity = ActivitySource.StartActivity("Request", ActivityKind.Consumer))
+        {
+            activity?.SetTag("RestApiPoller.Parameter.createdAt__gt", QueryWindowStartTime);
+            activity?.SetTag("RestApiPoller.Parameter.createdAt__lt", QueryWindowEndTime);
+            activity?.SetTag("RestApiPoller.Parameter.limit", 12);
+            activity?.SetTag("RestApiPoller.Parameter.cursor", NextCursor);
+
+            response = await client.SyntheticS1_GetAlertsAsync(
+                QueryWindowStartTime, QueryWindowEndTime, null, null, 12, NextCursor, stoppingToken);
+        }
+
+        if (response == null)
+        {
+            return true;
+        }
+
+        List<string>? ingestData = null;
+
+        using (var activity = ActivitySource.StartActivity("Extract", ActivityKind.Consumer))
+        {
+            NextCursor = response.Pagination?.NextCursor;
+            var Count = response.Data.Count;
+
+            activity?.SetTag("RestApiPoller.NextCursor", NextCursor);
+            activity?.SetTag("RestApiPoller.Count", Count);
+
+            ingestData = response.Data
+                .Select(x => x.AlertInfo.CreatedAt.ToString())
+                .ToList();
+
+            // Simulate request processing
+            await Task.Delay(TimeSpan.FromSeconds(0.05));
+        }
+
+        if (ingestData == null || ingestData.Count == 0)
+        {
+            return true; // No more data to process
+        }
+
+        // Ingest the data into the Data Collection Rule
+        using (var activity = ActivitySource.StartActivity("Ingest", ActivityKind.Consumer))
+        {
+            activity?.SetTag("RestApiPoller.Count", ingestData.Count);
+
+            await dataCollectionRuleClient.Ingest_PostAsync("Alerts_CL",ingestData, CancellationToken.None);
             await Task.Delay(TimeSpan.FromSeconds(0.05));
         }        
 
