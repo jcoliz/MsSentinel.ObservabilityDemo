@@ -15,6 +15,30 @@ paths:
       responses:
         204:
           description: No content
+  '/auth/get_token':
+    post:
+      operationId: SyntheticS1_GetToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Token response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
   '/web/api/v2.1/activities':
     get:
       operationId: SyntheticS1_GetActivities

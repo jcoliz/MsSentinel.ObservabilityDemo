@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Common.Identity.Services;
 using MsSentinel.MockApi.WebApi.Api;
 using MsSentinel.MockApi.WebApi.Application;
 
@@ -7,18 +8,18 @@ namespace MsSentinel.MockApi.WebApi.Controllers;
 
 public partial class ServiceControllerImplementation(FailureModes failureModes, ActivitySource activitySource, ILogger<ServiceControllerImplementation> logger) : ISyntheticS1Controller
 {
-    private IReadOnlyDictionary<string,IEnumerable<string>> emptyHeaders { get; } = new Dictionary<string,IEnumerable<string>>();
+    private IReadOnlyDictionary<string, IEnumerable<string>> emptyHeaders { get; } = new Dictionary<string, IEnumerable<string>>();
 
     const int maxRecords = 100;
     const int numRecordsPerPage = 12;
 
-    static readonly string[] _users = [ "Amy", "Bob", "Cat", "Dee", "Flo" ]; 
+    static readonly string[] _users = ["Amy", "Bob", "Cat", "Dee", "Flo"];
 
-    static readonly string[] _ips = [ "10.0.0.1", "10.0.0.2", "10.0.0.3" ]; 
+    static readonly string[] _ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3"];
 
-    static readonly string[] _rules = [ "Visited-TI-Url", "Opened-TI-hash-file" ];
+    static readonly string[] _rules = ["Visited-TI-Url", "Opened-TI-hash-file"];
 
-    static readonly string[] _triggers = [ "https://wut.ru/", "1A2DC56F8", "http://threats.gov/", "5F8AS321" ];
+    static readonly string[] _triggers = ["https://wut.ru/", "1A2DC56F8", "http://threats.gov/", "5F8AS321"];
 
     public async Task<SwaggerResponse<ActivityResponse>> GetActivitiesAsync(string? userAgent, DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
     {
@@ -26,12 +27,12 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
         logUserAgent(userAgent ?? "none");
 
-        var count = limit.HasValue ? Math.Min(limit.Value,numRecordsPerPage) : numRecordsPerPage;
+        var count = limit.HasValue ? Math.Min(limit.Value, numRecordsPerPage) : numRecordsPerPage;
         var first = cursor ?? 0;
         var last = first + count;
         var data = Enumerable
             .Range(0, count)
-            .Select(x => new CustomSentinelOneActivities_API() 
+            .Select(x => new CustomSentinelOneActivities_API()
             {
                 Id = Guid.NewGuid(),
                 ThreatId = Guid.NewGuid(),
@@ -44,7 +45,7 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
                 SecondaryDescription = secondaryDescription(x),
                 Comments = "Synthetic activity",
                 Data = $"{{ \"computerName\": \"{Guid.NewGuid()}\", \"userName\": \"{user(x)}\", \"role\": \"{role(x)}\" }}",
-                AgentId = _agentVersions[ x % _agentVersions.Length ],
+                AgentId = _agentVersions[x % _agentVersions.Length],
                 ActivityType = activityType(first + x)
             })
             .ToList();
@@ -52,8 +53,8 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
         await Task.Delay(TimeSpan.FromSeconds(0.1));
         using (var activity_db = activitySource.StartActivity("Database", ActivityKind.Consumer))
         {
-            activity_db?.SetTag("SQL.Results.Count",data.Count);
-            activity_db?.SetTag("SQL.Command","SELECT * FROM Activities WHERE CreatedAt >= @createdAt__gt AMD CreatedAt < @createdAt__lt ORDER BY CreatedAt DESC OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY");
+            activity_db?.SetTag("SQL.Results.Count", data.Count);
+            activity_db?.SetTag("SQL.Command", "SELECT * FROM Activities WHERE CreatedAt >= @createdAt__gt AMD CreatedAt < @createdAt__lt ORDER BY CreatedAt DESC OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY");
             activity_db?.SetTag("SQL.Parameter.Offset", first);
             activity_db?.SetTag("SQL.Parameter.Limit", count);
             activity_db?.SetTag("SQL.Parameter.createdAt__gt", createdAt__gt);
@@ -65,10 +66,10 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
         logOkDetails(data.Count, createdAt__gt, createdAt__lt, updatedAt__gt, updatedAt__lt, limit, cursor);
 
-        var response = new ActivityResponse() 
-        { 
+        var response = new ActivityResponse()
+        {
             Data = data,
-            Pagination = last < maxRecords ? new Pagination() { NextCursor = last} : null
+            Pagination = last < maxRecords ? new Pagination() { NextCursor = last } : null
         };
 
         return new SwaggerResponse<ActivityResponse>(StatusCodes.Status200OK, emptyHeaders, response);
@@ -76,7 +77,7 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
     private static string pick(string[] from, int x)
     {
-        return from[ x % from.Length ];
+        return from[x % from.Length];
     }
 
     private static string role(int x)
@@ -106,39 +107,39 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
     private static string primaryDescription(int x)
     {
-        string result = $"Address {_ips[ x % _ips.Length ]}";
+        string result = $"Address {_ips[x % _ips.Length]}";
 
         if (activityType(x) == 3608)
         {
-            result = $"Alert created for {pick(_triggers,x)} from Custom Rule: {pick(_rules,x)} in Group detected on {user(x)}.synthetic.contoso.com. " + result;
+            result = $"Alert created for {pick(_triggers, x)} from Custom Rule: {pick(_rules, x)} in Group detected on {user(x)}.synthetic.contoso.com. " + result;
         }
 
         return result;
     }
 
-    private static string user(int x) => pick(_users,x);
+    private static string user(int x) => pick(_users, x);
 
     // NOTE: ActivityType == 3608 will be the activitiy we need to see for an alert to show up on the daskboard
 
     // TODO: Sentinel One - Agent uninstalled from multiple hosts
 
-    static readonly string[] _agentVersions = [ "21.7.4.1043", "21.7.4.5853", "21.10.3.3", "21.12.1.5913", "20.0" ]; 
+    static readonly string[] _agentVersions = ["21.7.4.1043", "21.7.4.5853", "21.10.3.3", "21.12.1.5913", "20.0"];
 
     public Task<SwaggerResponse<AgentResponse>> GetAgentsAsync(DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
     {
         using var activity = activitySource.StartActivity("GetAgentsAsync", ActivityKind.Server);
 
         var total = numRecordsPerPage / 2;
-        var count = limit.HasValue ? Math.Min(limit.Value,total) : total;
+        var count = limit.HasValue ? Math.Min(limit.Value, total) : total;
         var data = Enumerable
             .Range(0, count)
-            .Select(x => new CustomSentinelOneAgents_API() 
+            .Select(x => new CustomSentinelOneAgents_API()
             {
                 Id = Guid.NewGuid(),
                 UpdatedAt = updatedAt__lt,
                 CreatedAt = createdAt__lt ?? DateTimeOffset.UtcNow,
                 IsActive = true,
-                AgentVersion = _agentVersions[ x % _agentVersions.Length ],
+                AgentVersion = _agentVersions[x % _agentVersions.Length],
                 ComputerName = Guid.NewGuid().ToString()
             })
             .ToList();
@@ -151,12 +152,12 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
     public async Task<SwaggerResponse<AlertResponse>> GetAlertsAsync(DateTimeOffset? createdAt__gt, DateTimeOffset? createdAt__lt, DateTimeOffset? updatedAt__gt, DateTimeOffset? updatedAt__lt, int? limit, int? cursor)
     {
         using var activity = activitySource.StartActivity("GetAlertsAsync", ActivityKind.Server);
-        
+
         await Task.Delay(TimeSpan.FromSeconds(0.05));
         using (var activity_db = activitySource.StartActivity("Database", ActivityKind.Consumer))
         {
-            activity_db?.SetTag("SQL.Results.Count",1);
-            activity_db?.SetTag("SQL.Command","SELECT * FROM Alerts WHERE CreatedAt >= @createdAt__gt AMD CreatedAt < @createdAt__lt ORDER BY CreatedAt DESC OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY");            
+            activity_db?.SetTag("SQL.Results.Count", 1);
+            activity_db?.SetTag("SQL.Command", "SELECT * FROM Alerts WHERE CreatedAt >= @createdAt__gt AMD CreatedAt < @createdAt__lt ORDER BY CreatedAt DESC OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY");
             activity_db?.SetTag("SQL.Parameter.Offset", cursor);
             activity_db?.SetTag("SQL.Parameter.Limit", limit ?? numRecordsPerPage);
             activity_db?.SetTag("SQL.Parameter.createdAt__gt", createdAt__gt);
@@ -174,7 +175,7 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
         logOkDetails(1, createdAt__gt, createdAt__lt, updatedAt__gt, updatedAt__lt, limit, cursor);
 
-        return 
+        return
             new SwaggerResponse<AlertResponse>
             (
                 StatusCodes.Status200OK,
@@ -187,7 +188,7 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
                         {
                             AlertInfo = new()
                             {
-                                CreatedAt = createdAt__lt ?? DateTimeOffset.UtcNow                                
+                                CreatedAt = createdAt__lt ?? DateTimeOffset.UtcNow
                             }
                         }
                     ]
@@ -211,19 +212,19 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
         (
             new SwaggerResponse<GroupsResponse>
             (
-                StatusCodes.Status200OK, 
-                emptyHeaders, 
-                new () 
-                { 
-                    Data = 
-                    [ 
-                        new() 
+                StatusCodes.Status200OK,
+                emptyHeaders,
+                new()
+                {
+                    Data =
+                    [
+                        new()
                         {
                             Id = Guid.NewGuid(),
                             UpdatedAt = updatedAt__lt,
                             CreatedAt = createdAt__lt ?? DateTimeOffset.UtcNow,
                         }
-                    ] 
+                    ]
                 }
             )
         );
@@ -240,7 +241,7 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
         }
 
         var total = numRecordsPerPage / 4;
-        var count = limit.HasValue ? Math.Min(limit.Value,total) : total;
+        var count = limit.HasValue ? Math.Min(limit.Value, total) : total;
         var data = Enumerable
             .Range(0, count)
             .Select(x => new CustomSentinelOneThreats_API()
@@ -255,6 +256,32 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
         return Task.FromResult(new SwaggerResponse<ThreatResponse>(StatusCodes.Status200OK, emptyHeaders, new() { Data = data }));
     }
 
+    public async Task<SwaggerResponse<Response>> GetTokenAsync(Body body)
+    {
+        using var activity = activitySource.StartActivity("GetTokenAsync", ActivityKind.Server);
+
+        try
+        {
+            var username = body.Username?.Trim() ?? "Anonymous";
+
+            activity?.SetTag("Parameters.Ueername", username);
+
+            var token = JwtTokenService.CreateAccessTokenAsync(username);
+
+            // Simulate authentication delay
+            await Task.Delay(TimeSpan.FromSeconds(0.1));
+
+            logOk();
+
+            return new SwaggerResponse<Response>(StatusCodes.Status200OK, emptyHeaders, new() { Token = token });
+        }
+        catch (Exception ex)
+        {
+            LogFail(ex);
+            return new SwaggerResponse<Response>(StatusCodes.Status500InternalServerError, emptyHeaders, new());
+        }
+    }
+
     [LoggerMessage(Level = LogLevel.Information, Message = "{Location}: OK", EventId = 1000)]
     public partial void logOk([CallerMemberName] string? location = null);
 
@@ -263,7 +290,10 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 
     [LoggerMessage(Level = LogLevel.Information, Message = "{Location}: User-Agent: {UserAgent}", EventId = 1002)]
     public partial void logUserAgent(string userAgent, [CallerMemberName] string? location = null);
- 
+
     [LoggerMessage(Level = LogLevel.Warning, Message = "{Location}: Failure {Status}", EventId = 1007)]
     public partial void logFailureMode(int status, [CallerMemberName] string? location = null);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "{Location}: Fail", EventId = 1008)]
+    public partial void LogFail(Exception ex, [CallerMemberName] string? location = null);
 }

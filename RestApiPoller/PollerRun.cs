@@ -6,12 +6,14 @@ namespace MsSentinel.ObservabilityDemo.RestApiPoller;
 public abstract class PollerRun
 {
     protected readonly ActivitySource ActivitySource;
+    protected readonly MockApi.MockApiClient MockApiClient;
     protected readonly string Name;
     protected readonly DateTimeOffset QueryWindowStartTime ;
     protected readonly DateTimeOffset QueryWindowEndTime = DateTimeOffset.UtcNow;
 
-    protected PollerRun(ActivitySource activitySource, string name)
+    protected PollerRun(MockApi.MockApiClient client, ActivitySource activitySource, string name)
     {
+        MockApiClient = client ?? throw new ArgumentNullException(nameof(client));
         Name = name;
         ActivitySource = activitySource ?? throw new ArgumentNullException(nameof(activitySource));
         QueryWindowEndTime = DateTimeOffset.UtcNow;
@@ -65,8 +67,11 @@ public abstract class PollerRun
         {
             using (var activity_2 = ActivitySource.StartActivity("Request", ActivityKind.Consumer))
             {
-                // Simulate authentication delay
-                await Task.Delay(TimeSpan.FromSeconds(0.1), stoppingToken);
+                activity_2?.SetTag("RestApiPoller.Parameter.user", "user1");
+
+                var token = await MockApiClient.SyntheticS1_GetTokenAsync(new() { Username = "user1", Password = "password1" }, stoppingToken);
+
+                activity_2?.SetTag("RestApiPoller.Result.token.size", token?.Token.Length ?? 0);
             }
         }
     }
@@ -77,7 +82,7 @@ public class GetUpdatedActivitiesRun(
     DcrApiClient dataCollectionRuleClient,
     ActivitySource activitySource
 )
-    : PollerRun(activitySource, "GetUpdatedActivities")
+    : PollerRun(client, activitySource, "GetUpdatedActivities")
 {
     private int? NextCursor { get; set; }
 
@@ -144,7 +149,7 @@ public class GetAlertsRun(
     DcrApiClient dataCollectionRuleClient,
     ActivitySource activitySource
 )
-    : PollerRun(activitySource, "GetAlerts")
+    : PollerRun(client, activitySource, "GetAlerts")
 {
     private int? NextCursor { get; set; }
 
