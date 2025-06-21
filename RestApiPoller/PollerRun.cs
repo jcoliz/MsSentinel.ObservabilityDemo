@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using MsSentinel.ObservabilityDemo.DataCollectionRule;
 
 namespace MsSentinel.ObservabilityDemo.RestApiPoller;
@@ -8,7 +9,7 @@ public abstract class PollerRun
     protected readonly ActivitySource ActivitySource;
     protected readonly MockApi.MockApiClient MockApiClient;
     protected readonly string Name;
-    protected readonly DateTimeOffset QueryWindowStartTime ;
+    protected readonly DateTimeOffset QueryWindowStartTime;
     protected readonly DateTimeOffset QueryWindowEndTime = DateTimeOffset.UtcNow;
 
     protected PollerRun(MockApi.MockApiClient client, ActivitySource activitySource, string name)
@@ -65,16 +66,31 @@ public abstract class PollerRun
     {
         using (var activity = ActivitySource.StartActivity("Auth", ActivityKind.Consumer))
         {
-            using (var activity_2 = ActivitySource.StartActivity("Request", ActivityKind.Consumer))
+            activity?.SetTag("RestApiPoller.Parameter.user", "user1");
+
+            var token = await MockApiClient.SyntheticS1_GetTokenAsync(new() { Username = "user1", Password = "password1" }, stoppingToken);
+            if (token != null)
             {
-                activity_2?.SetTag("RestApiPoller.Parameter.user", "user1");
-
-                var token = await MockApiClient.SyntheticS1_GetTokenAsync(new() { Username = "user1", Password = "password1" }, stoppingToken);
-
-                activity_2?.SetTag("RestApiPoller.Result.token.size", token?.Token.Length ?? 0);
+                activity?.SetTag("RestApiPoller.Result.token.size", token.Token.Length);
+                foreach(var claim in UnpackJwtToken(token.Token))
+                {
+                    activity?.SetTag($"RestApiPoller.Result.token.claims.{claim.Key}", claim.Value);
+                }
             }
         }
     }
+    
+    /// <summary>
+    /// Decode a JWT and return its claims as a dictionary
+    /// </summary>
+    /// <param name="token">The JWT to decode</param>
+    /// <returns>A dictionary of claims contained in the JWT</returns>
+    private static IDictionary<string, string> UnpackJwtToken(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(token);
+        return jwtToken.Claims.ToDictionary(c => c.Type, c => c.Value);
+    }    
 }
 
 public class GetUpdatedActivitiesRun(
