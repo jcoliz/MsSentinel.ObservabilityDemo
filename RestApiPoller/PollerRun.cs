@@ -123,7 +123,7 @@ public class GetUpdatedActivitiesRun(
             return true;
         }
 
-        List<string>? ingestData = null;
+        List<MockApi.CustomSentinelOneActivities_API>? ingestData = null;
 
         using (var activity = ActivitySource.StartActivity("Extract", ActivityKind.Consumer))
         {
@@ -133,15 +133,13 @@ public class GetUpdatedActivitiesRun(
             activity?.SetTag("RestApiPoller.NextCursor", NextCursor);
             activity?.SetTag("RestApiPoller.Count", Count);
 
-            ingestData = response.Data
-                .Select(activity => activity.Id.ToString())
-                .ToList();
+            ingestData = response.Data.ToList();
 
             // Simulate request processing
             await Task.Delay(TimeSpan.FromSeconds(0.05));
         }
 
-        if (ingestData == null || ingestData.Count == 0)
+        if (ingestData == null)
         {
             return true; // No more data to process
         }
@@ -149,7 +147,14 @@ public class GetUpdatedActivitiesRun(
         // Ingest the data into the Data Collection Rule
         using (var activity = ActivitySource.StartActivity("Ingest", ActivityKind.Consumer))
         {
-            activity?.SetTag("RestApiPoller.Count", ingestData.Count);
+            activity?.SetTag("RestApiPoller.Count", ingestData.Count());
+
+            // inject traceid and spanid into each object
+            foreach (var item in ingestData)
+            {
+                item.TraceId = Activity.Current?.TraceId.ToString();
+                item.SpanId = Activity.Current?.SpanId.ToString();
+            }
 
             await dataCollectionRuleClient.Ingest_PostAsync("Activities_CL", ingestData, CancellationToken.None);
             await Task.Delay(TimeSpan.FromSeconds(0.05));
@@ -189,7 +194,7 @@ public class GetAlertsRun(
             return true;
         }
 
-        List<string>? ingestData = null;
+        List<object>? ingestData = null;
 
         using (var activity = ActivitySource.StartActivity("Extract", ActivityKind.Consumer))
         {
@@ -199,9 +204,7 @@ public class GetAlertsRun(
             activity?.SetTag("RestApiPoller.NextCursor", NextCursor);
             activity?.SetTag("RestApiPoller.Count", Count);
 
-            ingestData = response.Data
-                .Select(x => x.AlertInfo.CreatedAt.ToString())
-                .ToList();
+            ingestData = response.Data.ToList<object>();
 
             // Simulate request processing
             await Task.Delay(TimeSpan.FromSeconds(0.05));
@@ -217,7 +220,8 @@ public class GetAlertsRun(
         {
             activity?.SetTag("RestApiPoller.Count", ingestData.Count);
 
-            await dataCollectionRuleClient.Ingest_PostAsync("Alerts_CL",ingestData, CancellationToken.None);
+            // DCR actually only works for Activities_CL, not Alerts_CL
+            //await dataCollectionRuleClient.Ingest_PostAsync("Alerts_CL",ingestData, CancellationToken.None);
             await Task.Delay(TimeSpan.FromSeconds(0.05));
         }        
 

@@ -517,6 +517,12 @@ components:
         comments:
           description: Any comments associated with the event.
           type: string
+        TraceId:
+          description: The trace identifier for the event.
+          type: string
+        SpanId:
+          description: The tracing span identifier for the event.
+          type: string
     Custom-SentinelOneAgents_API:
       type: object
       additionalProperties: false

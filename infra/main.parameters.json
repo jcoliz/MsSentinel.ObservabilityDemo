@@ -1,0 +1,266 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "inputColumns": {
+            "value": [
+                {
+                    "name": "agentUpdatedVersion",
+                    "type": "string",
+                    "description": "The version of the agent that was updated."
+                },
+                {
+                    "name": "TraceId",
+                    "type": "string",
+                    "description": "The trace which wrote this row."
+                },
+                {
+                    "name": "SpanId",
+                    "type": "string",
+                    "description": "The span which wrote this row."
+                },
+                {
+                    "name": "userId",
+                    "type": "string",
+                    "description": "The unique identifier for the user."
+                },
+                {
+                    "name": "threatId",
+                    "type": "string",
+                    "description": "The unique identifier for the threat."
+                },
+                {
+                    "name": "primaryDescription",
+                    "type": "string",
+                    "description": "The primary description of the event."
+                },
+                {
+                    "name": "secondaryDescription",
+                    "type": "string",
+                    "description": "The secondary description of the event."
+                },
+                {
+                    "name": "id",
+                    "type": "string",
+                    "description": "The unique identifier for the record."
+                },
+                {
+                    "name": "groupId",
+                    "type": "string",
+                    "description": "The unique identifier for the group."
+                },
+                {
+                    "name": "createdAt",
+                    "type": "datetime",
+                    "description": "The timestamp (UTC) when the record was created."
+                },
+                {
+                    "name": "accountName",
+                    "type": "string",
+                    "description": "The name of the account associated with the event."
+                },
+                {
+                    "name": "data",
+                    "type": "string",
+                    "description": "Activity metadata."
+                },
+                {
+                    "name": "agentId",
+                    "type": "string",
+                    "description": "The unique identifier for the agent."
+                },
+                {
+                    "name": "hash",
+                    "type": "string",
+                    "description": "The hash associated with the event."
+                },
+                {
+                    "name": "updatedAt",
+                    "type": "string",
+                    "description": "The timestamp (UTC) when the record was last updated."
+                },
+                {
+                    "name": "description",
+                    "type": "string",
+                    "description": "The description of the event."
+                },
+                {
+                    "name": "activityUuid",
+                    "type": "string",
+                    "description": "The UUID of the activity associated with the event."
+                },
+                {
+                    "name": "siteId",
+                    "type": "string",
+                    "description": "The unique identifier for the site."
+                },
+                {
+                    "name": "activityType",
+                    "type": "real",
+                    "description": "The type of activity represented by an integer."
+                },
+                {
+                    "name": "siteName",
+                    "type": "string",
+                    "description": "The name of the site associated with the event."
+                },
+                {
+                    "name": "accountId",
+                    "type": "string",
+                    "description": "The unique identifier for the account."
+                },
+                {
+                    "name": "osFamily",
+                    "type": "string",
+                    "description": "The operating system family, such as macOS."
+                },
+                {
+                    "name": "groupName",
+                    "type": "string",
+                    "description": "The name of the group associated with the event."
+                },
+                {
+                    "name": "comments",
+                    "type": "string",
+                    "description": "Any comments associated with the event."
+                }
+            ]
+        },
+        "transformKql": {
+            "value": "source | project TraceId, SpanId, TimeGenerated = createdAt, AgentUpdatedVersion = agentUpdatedVersion, UserId = userId, ThreatId = threatId, PrimaryDescription = primaryDescription, SecondaryDescription = secondaryDescription, Id = id, GroupId = groupId, CreatedAt = createdAt, AccountName = accountName, Data = data, AgentId = agentId, Hash = hash, UpdatedAt = todatetime(updatedAt), Description = description, ActivityUuid = activityUuid, SiteId = siteId, ActivityType = activityType, SiteName = siteName, AccountId = accountId, OsFamily = osFamily, GroupName = groupName, Comments = comments"
+        },
+        "tableSchema": {
+            "value": {
+                "name": "SentinelOneActivities_CL",
+                "columns": [
+                {
+                    "name": "TimeGenerated",
+                    "type": "datetime",
+                    "isDefaultDisplay": true,
+                    "description": "The timestamp (UTC) reflecting the time in which the event was generated."
+                },
+                {
+                    "name": "TraceId",
+                    "type": "string",
+                    "description": "The trace which wrote this row."
+                },
+                {
+                    "name": "SpanId",
+                    "type": "string",
+                    "description": "The span which wrote this row."
+                },
+                {
+                    "name": "AgentUpdatedVersion",
+                    "type": "string",
+                    "description": "The version of the agent that was updated."
+                },
+                {
+                    "name": "UserId",
+                    "type": "string",
+                    "description": "The unique identifier for the user."
+                },
+                {
+                    "name": "ThreatId",
+                    "type": "string",
+                    "description": "The unique identifier for the threat."
+                },
+                {
+                    "name": "PrimaryDescription",
+                    "type": "string",
+                    "description": "The primary description of the event."
+                },
+                {
+                    "name": "SecondaryDescription",
+                    "type": "string",
+                    "description": "The secondary description of the event."
+                },
+                {
+                    "name": "Id",
+                    "type": "string",
+                    "description": "The unique identifier for the record."
+                },
+                {
+                    "name": "GroupId",
+                    "type": "string",
+                    "description": "The unique identifier for the group."
+                },
+                {
+                    "name": "CreatedAt",
+                    "type": "datetime",
+                    "description": "The timestamp (UTC) when the record was created."
+                },
+                {
+                    "name": "AccountName",
+                    "type": "string",
+                    "description": "The name of the account associated with the event."
+                },
+                {
+                    "name": "Data",
+                    "type": "string",
+                    "description": "Activity metadata."
+                },
+                {
+                    "name": "AgentId",
+                    "type": "string",
+                    "description": "The unique identifier for the agent."
+                },
+                {
+                    "name": "Hash",
+                    "type": "string",
+                    "description": "The hash associated with the event."
+                },
+                {
+                    "name": "UpdatedAt",
+                    "type": "datetime",
+                    "description": "The timestamp (UTC) when the record was last updated."
+                },
+                {
+                    "name": "Description",
+                    "type": "string",
+                    "description": "The description of the event."
+                },
+                {
+                    "name": "ActivityUuid",
+                    "type": "string",
+                    "description": "The UUID of the activity associated with the event."
+                },
+                {
+                    "name": "SiteId",
+                    "type": "string",
+                    "description": "The unique identifier for the site."
+                },
+                {
+                    "name": "ActivityType",
+                    "type": "real",
+                    "description": "The type of activity represented by an integer."
+                },
+                {
+                    "name": "SiteName",
+                    "type": "string",
+                    "description": "The name of the site associated with the event."
+                },
+                {
+                    "name": "AccountId",
+                    "type": "string",
+                    "description": "The unique identifier for the account."
+                },
+                {
+                    "name": "OsFamily",
+                    "type": "string",
+                    "description": "The operating system family, such as macOS."
+                },
+                {
+                    "name": "GroupName",
+                    "type": "string",
+                    "description": "The name of the group associated with the event."
+                },
+                {
+                    "name": "Comments",
+                    "type": "string",
+                    "description": "Any comments associated with the event."
+                }
+                ]
+            }
+        }
+    }
+}

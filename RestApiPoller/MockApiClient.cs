@@ -1526,6 +1526,20 @@ namespace MsSentinel.ObservabilityDemo.MockApi
         [System.Text.Json.Serialization.JsonPropertyName("comments")]
         public string Comments { get; set; }
 
+        /// <summary>
+        /// The trace identifier for the event.
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("TraceId")]
+        public string TraceId { get; set; }
+
+        /// <summary>
+        /// The tracing span identifier for the event.
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("SpanId")]
+        public string SpanId { get; set; }
+
     }
 
     /// <summary>

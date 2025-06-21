@@ -7,11 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Alexinea.Extensions.Configuration.Toml" Version="7.0.0" />
+    <PackageReference Include="Azure.Identity" Version="1.14.0" />
+    <PackageReference Include="Azure.Monitor.Ingestion" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.12.0" />
 		<PackageReference Include="NSwag.MSBuild" Version="14.4.0">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config.toml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <Target Name="NSwag" AfterTargets="PostBuildEvent">

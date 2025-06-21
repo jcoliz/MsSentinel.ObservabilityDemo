@@ -57,17 +57,17 @@ namespace MsSentinel.ObservabilityDemo.DataCollectionRule
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task Ingest_PostAsync(string table, System.Collections.Generic.IEnumerable<string> strings)
+        public virtual System.Threading.Tasks.Task Ingest_PostAsync(string table, System.Collections.Generic.IEnumerable<object> objects)
         {
-            return Ingest_PostAsync(table, strings, System.Threading.CancellationToken.None);
+            return Ingest_PostAsync(table, objects, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task Ingest_PostAsync(string table, System.Collections.Generic.IEnumerable<string> strings, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task Ingest_PostAsync(string table, System.Collections.Generic.IEnumerable<object> objects, System.Threading.CancellationToken cancellationToken)
         {
-            if (strings == null)
-                throw new System.ArgumentNullException("strings");
+            if (objects == null)
+                throw new System.ArgumentNullException("objects");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -75,7 +75,7 @@ namespace MsSentinel.ObservabilityDemo.DataCollectionRule
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(strings, JsonSerializerSettings);
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(objects, JsonSerializerSettings);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;

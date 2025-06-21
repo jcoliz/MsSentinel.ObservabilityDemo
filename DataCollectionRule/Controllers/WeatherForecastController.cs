@@ -1,14 +1,18 @@
 using System.Diagnostics;
+using System.Text.Json;
+using Azure.Monitor.Ingestion;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using MsSentinel.ObservabilityDemo.DataCollectionRule.Options;
 
 namespace MsSentinel.ObservabilityDemo.DataCollectionRule.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public partial class IngestController(ActivitySource activitySource, ILogger<IngestController> logger) : ControllerBase
+public partial class IngestController(LogsIngestionClient client, IOptions<LogIngestionOptions> logOptions, ActivitySource activitySource, ILogger<IngestController> logger) : ControllerBase
 {
     [HttpPost(Name = "PostToTable")]
-    public async Task Post(string table, string[] strings)
+    public async Task Post(string table, object[] objects)
     {
         try
         {
@@ -19,18 +23,26 @@ public partial class IngestController(ActivitySource activitySource, ILogger<Ing
 
             using (var activity = activitySource.StartActivity("Store", ActivityKind.Consumer))
             {
-                activity?.SetTag("DataCollectionRule.Count", strings.Length);
+                activity?.SetTag("DataCollectionRule.Count", objects.Length);
                 activity?.SetTag("DataCollectionRule.Table", table);
 
-                await Task.Delay(TimeSpan.FromSeconds(0.3));
+                var olist = objects.ToList();
 
-                LogIngestedItemsOk(strings.Length, table);
+                var result = await client.UploadAsync
+                (
+                    ruleId: logOptions.Value.DcrImmutableId,
+                    streamName: logOptions.Value.Stream,
+                    logs: olist
+                );
+
+                activity?.SetTag("DataCollectionRule.Result.Status", result.Status);
+                activity?.SetTag("DataCollectionRule.Result.ReasonPhrase", result.ReasonPhrase);
+                LogIngestedItemsOk(olist.Count, table);
             }
         }
         catch (Exception ex)
         {
             LogIngestedItemsError(ex);
-            throw;
         }
     }
 
