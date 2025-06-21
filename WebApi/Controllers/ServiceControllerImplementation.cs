@@ -9,7 +9,7 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
 {
     private IReadOnlyDictionary<string,IEnumerable<string>> emptyHeaders { get; } = new Dictionary<string,IEnumerable<string>>();
 
-    const int maxRecords = 24;
+    const int maxRecords = 100;
     const int numRecordsPerPage = 12;
 
     static readonly string[] _users = [ "Amy", "Bob", "Cat", "Dee", "Flo" ]; 

@@ -12,7 +12,7 @@ public partial class Worker(MockApi.MockApiClient client,
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var run = new GetUpdatedActivitiesRun(client, activitySource);
+            var run = new GetUpdatedActivitiesRun(client, dataCollectionRuleClient, activitySource);
 
             await run.RunAsync(stoppingToken);
 

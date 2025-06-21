@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using MsSentinel.ObservabilityDemo.DataCollectionRule;
 
 namespace MsSentinel.ObservabilityDemo.RestApiPoller;
 
@@ -22,19 +23,20 @@ public abstract class PollerRun
         using (var activity = ActivitySource.StartActivity($"Run {Name}", ActivityKind.Consumer))
         {
             activity?.SetTag("RestApiPoller.Name", Name);
-
             activity?.SetTag("RestApiPoller.QueryWindowStartTime", QueryWindowStartTime);
             activity?.SetTag("RestApiPoller.QueryWindowEndTime", QueryWindowEndTime);
 
             await AuthenticateAsync(stoppingToken);
 
-            await PageAsync(stoppingToken);
-
-            await PageAsync(stoppingToken);
+            var done = false;
+            while (!done && !stoppingToken.IsCancellationRequested)
+            {
+                done = await PageAsync(stoppingToken);
+            }
         }
     }
 
-    public abstract Task PageAsync(CancellationToken stoppingToken);
+    public abstract Task<bool> PageAsync(CancellationToken stoppingToken);
 
     protected void SetTag(string key, object value)
     {
@@ -54,25 +56,32 @@ public abstract class PollerRun
     }
 }
 
-public class GetUpdatedActivitiesRun(MockApi.MockApiClient client, ActivitySource activitySource)
+public class GetUpdatedActivitiesRun(
+    MockApi.MockApiClient client,
+    DcrApiClient dataCollectionRuleClient,
+    ActivitySource activitySource
+)
     : PollerRun(activitySource, "GetUpdatedActivities")
 {
     private int PageNumber { get; set; } = 1;
     private int? NextCursor { get; set; }
 
-    public override async Task PageAsync(CancellationToken stoppingToken)
+    public override async Task<bool> PageAsync(CancellationToken stoppingToken)
     {
+        bool done = true;
         using (var activity = ActivitySource.StartActivity($"Page {PageNumber}", ActivityKind.Consumer))
         {
             activity?.SetTag("RestApiPoller.PageNumber", PageNumber);
 
-            await RequestAsync(stoppingToken);
+            done = await RequestAsync(stoppingToken);
 
             ++PageNumber;
         }
+
+        return done;
     }
 
-    public async Task RequestAsync(CancellationToken stoppingToken)
+    public async Task<bool> RequestAsync(CancellationToken stoppingToken)
     {
         MockApi.ActivityResponse? response = null;
 
@@ -90,7 +99,7 @@ public class GetUpdatedActivitiesRun(MockApi.MockApiClient client, ActivitySourc
 
         if (response == null)
         {
-            return;
+            return true;
         }
 
         using (var activity = ActivitySource.StartActivity("Extract", ActivityKind.Consumer))
@@ -103,6 +112,14 @@ public class GetUpdatedActivitiesRun(MockApi.MockApiClient client, ActivitySourc
 
             // Simulate request processing
             await Task.Delay(TimeSpan.FromSeconds(0.05));
+        }
+
+        using (var activity = ActivitySource.StartActivity("Ingest", ActivityKind.Consumer))
+        {
+            await dataCollectionRuleClient.WeatherForecast_PostAsync([], CancellationToken.None);
+            await Task.Delay(TimeSpan.FromSeconds(0.05));
         }        
+
+        return NextCursor == null || NextCursor <= 0;
     }
 }
