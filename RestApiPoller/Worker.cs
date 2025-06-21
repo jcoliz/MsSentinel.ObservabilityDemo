@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using MsSentinel.ObservabilityDemo.ApiService;
 using MsSentinel.ObservabilityDemo.DataCollectionRule;
 
 namespace MsSentinel.ObservabilityDemo.RestApiPoller;
@@ -13,11 +12,9 @@ public partial class Worker(MockApi.MockApiClient client,
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var t1 = ProcessSingleRun("GetUpdatedActivities", stoppingToken);
-            await Task.Delay(150, stoppingToken);
-            var t2 = ProcessSingleRun("GetAlerts", stoppingToken);
+            var run = new GetUpdatedActivitiesRun(client, activitySource);
 
-            await Task.WhenAll(t1, t2);
+            await run.RunAsync(stoppingToken);
 
             await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
         }
