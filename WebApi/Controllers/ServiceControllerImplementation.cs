@@ -52,7 +52,7 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
         await Task.Delay(TimeSpan.FromSeconds(0.1));
         using (var activity_db = activitySource.StartActivity("Database", ActivityKind.Consumer))
         {
-            activity_db?.SetTag("SQL.ResultsCount",data.Count);
+            activity_db?.SetTag("SQL.Results.Count",data.Count);
             activity_db?.SetTag("SQL.Command","SELECT * FROM Activities WHERE CreatedAt >= @createdAt__gt AMD CreatedAt < @createdAt__lt ORDER BY CreatedAt DESC OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY");
             activity_db?.SetTag("SQL.Parameter.Offset", first);
             activity_db?.SetTag("SQL.Parameter.Limit", count);
@@ -155,10 +155,16 @@ public partial class ServiceControllerImplementation(FailureModes failureModes, 
         await Task.Delay(TimeSpan.FromSeconds(0.05));
         using (var activity_db = activitySource.StartActivity("Database", ActivityKind.Consumer))
         {
+            activity_db?.SetTag("SQL.Results.Count",1);
+            activity_db?.SetTag("SQL.Command","SELECT * FROM Alerts WHERE CreatedAt >= @createdAt__gt AMD CreatedAt < @createdAt__lt ORDER BY CreatedAt DESC OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY");            
+            activity_db?.SetTag("SQL.Parameter.Offset", cursor);
+            activity_db?.SetTag("SQL.Parameter.Limit", limit ?? numRecordsPerPage);
+            activity_db?.SetTag("SQL.Parameter.createdAt__gt", createdAt__gt);
+            activity_db?.SetTag("SQL.Parameter.createdAt__lt", createdAt__lt);
+
             await Task.Delay(TimeSpan.FromSeconds(0.35));
         }
         await Task.Delay(TimeSpan.FromSeconds(0.05));
-
 
         if (failureModes.AlertsStatus != StatusCodes.Status200OK)
         {
