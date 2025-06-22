@@ -127,7 +127,7 @@
             ]
         },
         "transformKql": {
-            "value": "source | project TraceId, SpanId, TimeGenerated = createdAt, AgentUpdatedVersion = agentUpdatedVersion, UserId = userId, ThreatId = threatId, PrimaryDescription = primaryDescription, SecondaryDescription = secondaryDescription, Id = id, GroupId = groupId, CreatedAt = createdAt, AccountName = accountName, Data = data, AgentId = agentId, Hash = hash, UpdatedAt = todatetime(updatedAt), Description = description, ActivityUuid = activityUuid, SiteId = siteId, ActivityType = activityType, SiteName = siteName, AccountId = accountId, OsFamily = osFamily, GroupName = groupName, Comments = comments"
+            "value": "source | extend TimeGenerated = now() | project TimeGenerated, TraceId, SpanId, AgentUpdatedVersion = agentUpdatedVersion, UserId = userId, ThreatId = threatId, PrimaryDescription = primaryDescription, SecondaryDescription = secondaryDescription, Id = id, GroupId = groupId, CreatedAt = createdAt, AccountName = accountName, Data = data, AgentId = agentId, Hash = hash, UpdatedAt = todatetime(updatedAt), Description = description, ActivityUuid = activityUuid, SiteId = siteId, ActivityType = activityType, SiteName = siteName, AccountId = accountId, OsFamily = osFamily, GroupName = groupName, Comments = comments"
         },
         "tableSchema": {
             "value": {

@@ -42,7 +42,8 @@ builder.Services.AddAzureClients(clientBuilder =>
     // Add a log ingestion client, using endpoint from configuration
     LogIngestionOptions logOptions = new();
     builder.Configuration.Bind(LogIngestionOptions.Section, logOptions);
-    clientBuilder.AddLogsIngestionClient(logOptions.EndpointUri).ConfigureOptions(options =>
+    clientBuilder.AddLogsIngestionClient(logOptions.EndpointUri)
+    .ConfigureOptions(options =>
     {
         options.Diagnostics.IsLoggingEnabled = true;
         options.Diagnostics.IsLoggingContentEnabled = true;

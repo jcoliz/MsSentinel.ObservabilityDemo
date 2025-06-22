@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using Azure.Core.Serialization;
 using Azure.Monitor.Ingestion;
 using Microsoft.Extensions.Options;
 using MsSentinel.ObservabilityDemo.DataCollectionRule;
@@ -167,7 +168,11 @@ public class GetUpdatedActivitiesRun(
             (
                 ruleId: logOptions.Value.DcrImmutableId,
                 streamName: logOptions.Value.Stream,
-                logs: ingestData
+                logs: ingestData,
+                options: new LogsUploadOptions
+                {
+                    Serializer = new MySerializer()
+                }
             );
 
             activity?.SetTag("RestApiPoller.Result.Status", result.Status);
@@ -175,9 +180,34 @@ public class GetUpdatedActivitiesRun(
         }
 
         return NextCursor == null || NextCursor <= 0;
-    }    
+    }
 }
 
+public class MySerializer : ObjectSerializer
+{
+    public override object? Deserialize(Stream stream, Type returnType, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override ValueTask<object?> DeserializeAsync(Stream stream, Type returnType, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Serialize(Stream stream, object? value, Type inputType, CancellationToken cancellationToken)
+    {
+        var result = System.Text.Json.JsonSerializer.Serialize(value, inputType);
+        using var writer = new StreamWriter(stream, leaveOpen: true);
+        writer.Write(result);
+        writer.Flush();
+    }
+
+    public override ValueTask SerializeAsync(Stream stream, object? value, Type inputType, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+}
 
 public class GetAlertsRun(
     MockApi.MockApiClient client,
@@ -237,7 +267,7 @@ public class GetAlertsRun(
             // DCR actually only works for Activities_CL, not Alerts_CL
             //await dataCollectionRuleClient.Ingest_PostAsync("Alerts_CL",ingestData, CancellationToken.None);
             await Task.Delay(TimeSpan.FromSeconds(0.05));
-        }        
+        }
 
         return NextCursor == null || NextCursor <= 0;
     }
