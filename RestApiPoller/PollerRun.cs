@@ -1,6 +1,9 @@
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using Azure.Monitor.Ingestion;
+using Microsoft.Extensions.Options;
 using MsSentinel.ObservabilityDemo.DataCollectionRule;
+using MsSentinel.ObservabilityDemo.DataCollectionRule.Options;
 
 namespace MsSentinel.ObservabilityDemo.RestApiPoller;
 
@@ -95,7 +98,8 @@ public abstract class PollerRun
 
 public class GetUpdatedActivitiesRun(
     MockApi.MockApiClient client,
-    DcrApiClient dataCollectionRuleClient,
+    LogsIngestionClient logsIngestionClient,
+    IOptions<LogIngestionOptions> logOptions,
     ActivitySource activitySource
 )
     : PollerRun(client, activitySource, "GetUpdatedActivities")
@@ -147,7 +151,7 @@ public class GetUpdatedActivitiesRun(
         // Ingest the data into the Data Collection Rule
         using (var activity = ActivitySource.StartActivity("Ingest", ActivityKind.Consumer))
         {
-            activity?.SetTag("RestApiPoller.Count", ingestData.Count());
+            activity?.SetTag("RestApiPoller.Count", ingestData.Count);
 
             // inject traceid and spanid into each object
             foreach (var item in ingestData)
@@ -156,18 +160,28 @@ public class GetUpdatedActivitiesRun(
                 item.SpanId = Activity.Current?.SpanId.ToString();
             }
 
-            await dataCollectionRuleClient.Ingest_PostAsync("Activities_CL", ingestData, CancellationToken.None);
-            await Task.Delay(TimeSpan.FromSeconds(0.05));
+            activity?.SetTag("RestApiPoller.DcrImmutableId", logOptions.Value.DcrImmutableId);
+            activity?.SetTag("RestApiPoller.Stream", logOptions.Value.Stream);
+
+            var result = await logsIngestionClient.UploadAsync
+            (
+                ruleId: logOptions.Value.DcrImmutableId,
+                streamName: logOptions.Value.Stream,
+                logs: ingestData
+            );
+
+            activity?.SetTag("RestApiPoller.Result.Status", result.Status);
+            activity?.SetTag("RestApiPoller.Result.ReasonPhrase", result.ReasonPhrase);
         }
 
         return NextCursor == null || NextCursor <= 0;
-    }
+    }    
 }
 
 
 public class GetAlertsRun(
     MockApi.MockApiClient client,
-    DcrApiClient dataCollectionRuleClient,
+    LogsIngestionClient logsIngestionClient,
     ActivitySource activitySource
 )
     : PollerRun(client, activitySource, "GetAlerts")
