@@ -62,7 +62,13 @@ public static class Extensions
                     .AddAspNetCoreInstrumentation()
                     // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
                     //.AddGrpcClientInstrumentation()
-                    .AddHttpClientInstrumentation();
+                    .AddHttpClientInstrumentation()
+                    // Add Jaeger exporter for traces
+                    .AddJaegerExporter(options =>
+                    {
+                        options.AgentHost = "localhost"; // Use the Jaeger container name
+                        options.AgentPort = 4317; // Default Jaeger UDP port
+                    });
             });
 
         builder.AddOpenTelemetryExporters();
