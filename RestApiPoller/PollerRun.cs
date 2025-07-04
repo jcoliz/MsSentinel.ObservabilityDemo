@@ -99,7 +99,7 @@ public abstract class PollerRun
 
 public class GetUpdatedActivitiesRun(
     MockApi.MockApiClient client,
-    LogsIngestionClient logsIngestionClient,
+    LogsIngestionClient? logsIngestionClient,
     IOptions<LogIngestionOptions> logOptions,
     ActivitySource activitySource
 )
@@ -153,6 +153,12 @@ public class GetUpdatedActivitiesRun(
         using (var activity = ActivitySource.StartActivity("Ingest", ActivityKind.Consumer))
         {
             activity?.SetTag("RestApiPoller.Count", ingestData.Count);
+
+            if (logsIngestionClient == null)
+            {
+                activity?.SetTag("RestApiPoller.Result.Error", "LogsIngestionClient is not configured.");
+                return true; // No ingestion client available
+            }
 
             // inject traceid and spanid into each object
             foreach (var item in ingestData)
@@ -211,7 +217,7 @@ public class MySerializer : ObjectSerializer
 
 public class GetAlertsRun(
     MockApi.MockApiClient client,
-    LogsIngestionClient logsIngestionClient,
+    LogsIngestionClient? logsIngestionClient,
     ActivitySource activitySource
 )
     : PollerRun(client, activitySource, "GetAlerts")

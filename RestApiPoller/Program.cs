@@ -42,6 +42,12 @@ builder.Services.AddAzureClients(clientBuilder =>
     // Add a log ingestion client, using endpoint from configuration
     LogIngestionOptions logOptions = new();
     builder.Configuration.Bind(LogIngestionOptions.Section, logOptions);
+
+    if (logOptions.EndpointUri is null)
+    {
+        return; // No log ingestion endpoint configured, skip adding the client.
+    }
+
     clientBuilder.AddLogsIngestionClient(logOptions.EndpointUri)
     .ConfigureOptions(options =>
     {
