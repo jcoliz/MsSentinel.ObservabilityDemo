@@ -1,7 +1,5 @@
 using System.Diagnostics;
 using Azure.Identity;
-using Azure.Monitor.Ingestion;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.Azure;
 using MsSentinel.ObservabilityDemo.DataCollectionRule;
 using MsSentinel.ObservabilityDemo.DataCollectionRule.Options;
@@ -22,6 +20,8 @@ builder.Services.AddHostedService<Worker>();
 
 builder.Services.AddSingleton(
     new ActivitySource("MsSentinel.ObservabilityDemo.RestApiPoller", "1.0.0"));
+
+builder.Services.AddSingleton<RunnerFactory>();
 
 builder.Services.AddHttpClient<MockApiClient>(client =>
     {

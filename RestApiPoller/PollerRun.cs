@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
 using Azure.Core.Serialization;
 using Azure.Monitor.Ingestion;
 using Microsoft.Extensions.Options;
@@ -97,15 +98,19 @@ public abstract class PollerRun
     }    
 }
 
-public class GetUpdatedActivitiesRun(
+public partial class GetUpdatedActivitiesRun(
     MockApi.MockApiClient client,
     LogsIngestionClient? logsIngestionClient,
     IOptions<LogIngestionOptions> logOptions,
-    ActivitySource activitySource
+    ActivitySource activitySource,
+    ILogger<GetUpdatedActivitiesRun> logger
 )
     : PollerRun(client, activitySource, "GetUpdatedActivities")
 {
-    private int? NextCursor { get; set; }
+    private int? NextCursor
+    {
+        get; set;
+    }
 
     protected override async Task<bool> RequestAsync(CancellationToken stoppingToken)
     {
@@ -156,6 +161,7 @@ public class GetUpdatedActivitiesRun(
 
             if (logsIngestionClient == null)
             {
+                logWarningNoLogsClient();
                 activity?.SetTag("RestApiPoller.Result.Error", "LogsIngestionClient is not configured.");
                 return true; // No ingestion client available
             }
@@ -187,6 +193,9 @@ public class GetUpdatedActivitiesRun(
 
         return NextCursor == null || NextCursor <= 0;
     }
+
+    [LoggerMessage(1, LogLevel.Warning, "{Location}: No LogsIngestionClient configured")]
+    public partial void logWarningNoLogsClient([CallerMemberName] string? location = null);
 }
 
 public class MySerializer : ObjectSerializer

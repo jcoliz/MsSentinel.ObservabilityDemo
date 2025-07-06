@@ -7,12 +7,9 @@ using MsSentinel.ObservabilityDemo.DataCollectionRule.Options;
 
 namespace MsSentinel.ObservabilityDemo.RestApiPoller;
 
-public partial class Worker(MockApi.MockApiClient client,
-    IEnumerable<LogsIngestionClient> logsIngestionClients,
-    IOptions<LogIngestionOptions> logOptions,
-    ActivitySource activitySource, ILogger<Worker> logger) : BackgroundService
+public partial class Worker(RunnerFactory runnerFactory, ILogger<Worker> logger) : BackgroundService
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -20,8 +17,8 @@ public partial class Worker(MockApi.MockApiClient client,
 
             try
             {
-                var activitiesRun = new GetUpdatedActivitiesRun(client, logsIngestionClients.FirstOrDefault(), logOptions, activitySource);
-                var alertsRun = new GetAlertsRun(client, logsIngestionClients.FirstOrDefault(), activitySource);
+                var activitiesRun = runnerFactory.CreateRunner<GetUpdatedActivitiesRun>();
+                var alertsRun = runnerFactory.CreateRunner<GetAlertsRun>();
 
                 var t1 = activitiesRun.RunAsync(stoppingToken);
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
