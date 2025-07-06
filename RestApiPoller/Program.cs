@@ -30,13 +30,6 @@ builder.Services.AddHttpClient<MockApiClient>(client =>
         client.BaseAddress = new("https+http://MockApi");
     });
 
-builder.Services.AddHttpClient<DcrApiClient>(client =>
-    {
-        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
-        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-        client.BaseAddress = new("https+http://DataCollectionRule");
-    });
-
 builder.Services.AddAzureClients(clientBuilder =>
 {
     // Add a log ingestion client, using endpoint from configuration
