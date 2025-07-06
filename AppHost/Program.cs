@@ -15,19 +15,4 @@ builder.AddProject<Projects.MsSentinel_ObservabilityDemo_RestApiPoller>("RestApi
     .WaitFor(mockApi)
     .WithServiceDefaults();
 
-#if false
-builder.AddProject<Projects.MsSentinel_ObservabilityDemo_Web>("WebFrontEnd")
-    .WithExternalHttpEndpoints()
-    .WithReference(apiService)
-    .WaitFor(apiService);
-#endif
-
-// Add Jaeger container for distributed tracing
-#if false
-builder.AddContainer("jaeger", "jaegertracing/all-in-one:1.53")
-    .WithEndpoint(port: 16686, name: "jaeger-ui", targetPort:16686, isExternal: true)
-    .WithEndpoint(port: 6831, name: "jaeger-udp", targetPort:6831)
-    .WithEnvironment("COLLECTOR_ZIPKIN_HOST_PORT", "9411");
-#endif
-
 await builder.Build().RunAsync();
