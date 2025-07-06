@@ -13,10 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RestApiPoller", "RestApiPol
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsSentinel.ObservabilityDemo.RestApiPoller", "RestApiPoller\MsSentinel.ObservabilityDemo.RestApiPoller.csproj", "{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataCollectionRule", "DataCollectionRule", "{80DE4C33-D8EB-6883-F521-1BF0BD1BC6EA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsSentinel.ObservabilityDemo.DataCollectionRule", "DataCollectionRule\MsSentinel.ObservabilityDemo.DataCollectionRule.csproj", "{FB8D32CD-BDD8-419C-99DD-E02489510D65}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{6EDC7094-E22D-CF10-605B-B42C7FB8B0A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsSentinel.MockApi.WebApi", "WebApi\MsSentinel.MockApi.WebApi.csproj", "{B34316F2-E936-47AF-92EC-9113974B0E27}"
@@ -79,18 +75,6 @@ Global
 		{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1}.Release|x64.Build.0 = Release|Any CPU
 		{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1}.Release|x86.ActiveCfg = Release|Any CPU
 		{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1}.Release|x86.Build.0 = Release|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|x64.Build.0 = Debug|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Debug|x86.Build.0 = Debug|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|x64.ActiveCfg = Release|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|x64.Build.0 = Release|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|x86.ActiveCfg = Release|Any CPU
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65}.Release|x86.Build.0 = Release|Any CPU
 		{B34316F2-E936-47AF-92EC-9113974B0E27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B34316F2-E936-47AF-92EC-9113974B0E27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B34316F2-E936-47AF-92EC-9113974B0E27}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -109,7 +93,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{70A2B5A1-C32D-4462-94DF-5C4BCE6CC0D1} = {FFEF27C0-4319-EBB3-586E-76A2939313E3}
-		{FB8D32CD-BDD8-419C-99DD-E02489510D65} = {80DE4C33-D8EB-6883-F521-1BF0BD1BC6EA}
 		{B34316F2-E936-47AF-92EC-9113974B0E27} = {6EDC7094-E22D-CF10-605B-B42C7FB8B0A8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
