@@ -66,8 +66,12 @@ public static class Extensions
                     // Add Jaeger exporter for traces
                     .AddJaegerExporter(options =>
                     {
-                        options.AgentHost = "localhost"; // Use the Jaeger container name
-                        options.AgentPort = 4317; // Default Jaeger UDP port
+                        // If the OTLP endpoint is configured, use it for the Jaeger exporter.
+                        var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+                        if (!string.IsNullOrWhiteSpace(otlpEndpoint))
+                        {
+                            options.Endpoint = new Uri(otlpEndpoint);
+                        }
                     });
             });
 
