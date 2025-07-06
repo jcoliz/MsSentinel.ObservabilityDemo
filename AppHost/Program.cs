@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Hosting;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var jaeger = builder.AddContainer("jaeger", "jaegertracing/all-in-one")
@@ -5,15 +7,13 @@ var jaeger = builder.AddContainer("jaeger", "jaegertracing/all-in-one")
     .WithHttpEndpoint(4317, targetPort: 4317, name: "jaegerEndpoint");
 
 var mockApi = builder.AddProject<Projects.MsSentinel_MockApi_WebApi>("MockApi")
-    .WithEnvironment("Logging__Console__FormatterName","systemd")
-    .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
-    .WaitFor(jaeger);
+    .WaitFor(jaeger)
+    .WithServiceDefaults();
 
 builder.AddProject<Projects.MsSentinel_ObservabilityDemo_RestApiPoller>("RestApiPoller")
     .WithReference(mockApi)
     .WaitFor(mockApi)
-    .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
-    .WithEnvironment("Logging__Console__FormatterName","systemd");
+    .WithServiceDefaults();
 
 #if false
 builder.AddProject<Projects.MsSentinel_ObservabilityDemo_Web>("WebFrontEnd")
