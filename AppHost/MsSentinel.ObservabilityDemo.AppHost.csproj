@@ -12,7 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApiService\MsSentinel.ObservabilityDemo.ApiService.csproj" />
     <ProjectReference Include="..\RestApiPoller\MsSentinel.ObservabilityDemo.RestApiPoller.csproj" />
     <ProjectReference Include="..\WebApi\MsSentinel.MockApi.WebApi.csproj" />
   </ItemGroup>

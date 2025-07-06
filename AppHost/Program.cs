@@ -1,20 +1,15 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var apiService = builder.AddProject<Projects.MsSentinel_ObservabilityDemo_ApiService>("ApiService")
-    .WithEnvironment("Logging__Console__FormatterName","systemd");
-
 var mockApi = builder.AddProject<Projects.MsSentinel_MockApi_WebApi>("MockApi")
     .WithEnvironment("Logging__Console__FormatterName","systemd");
 
 builder.AddProject<Projects.MsSentinel_ObservabilityDemo_RestApiPoller>("RestApiPoller")
-    .WithReference(apiService)
-    .WaitFor(apiService)
     .WithReference(mockApi)
     .WaitFor(mockApi)
     .WithEnvironment("Logging__Console__FormatterName","systemd");
 
 #if false
-builder.AddProject<Projects.MsSentinel_ObservabilityDemo_Web>("webfrontend")
+builder.AddProject<Projects.MsSentinel_ObservabilityDemo_Web>("WebFrontEnd")
     .WithExternalHttpEndpoints()
     .WithReference(apiService)
     .WaitFor(apiService);
